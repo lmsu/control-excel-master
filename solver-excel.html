@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Luis M. Salinas">
+    <title>Función Solver - Excel</title>
+    <style>
+        /* --- VARIABLES BASE --- */
+        :root {
+            --espaciado-ppal: 15px;
+            --borde-radio: 8px;
+            --sombra-nav: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --sombra-card: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* === TEMAS POR IDIOMA === */
+        .theme-es { --color-ppal: #1e88e5; --color-secundario: #1565c0; --color-fondo: #f4f6f9; --color-texto: #263238; }
+        .theme-en { --color-ppal: #43a047; --color-secundario: #2e7d32; --color-fondo: #f1f8e9; --color-texto: #1b5e20; }
+        .theme-ca { --color-ppal: #ffc107; --color-secundario: #ff9800; --color-fondo: #fff8e1; --color-texto: #d32f2f; }
+        .theme-fr { --color-ppal: #e53935; --color-secundario: #c62828; --color-fondo: #ffebee; --color-texto: #1a237e; }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        header {
+            background-color: var(--color-ppal);
+            box-shadow: var(--sombra-nav);
+            padding: 0 var(--espaciado-ppal);
+            margin-bottom: 30px;
+        }
+        .header-top {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 0; text-align: center;
+        }
+        .img-office {
+            width: 80px; height: 80px;
+            border-radius: 50%; object-fit: cover;
+            border: 3px solid white; margin-bottom: 12px;
+        }
+        .header-top h1 { color: white; margin: 0; font-size: 1.6rem; }
+
+        .contenido-ppal {
+            display: flex; gap: 30px;
+            max-width: 1200px; margin: 0 auto;
+            padding: 0 var(--espaciado-ppal) 30px;
+        }
+        .intro-card {
+            background: white; border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card); padding: 20px;
+            flex: 1;
+        }
+
+        .sect-ppal2 {
+            max-width: 1200px; margin: 10px auto 40px;
+            padding: 0 var(--espaciado-ppal);
+        }
+        .sect-ppal2 > h1 {
+            text-align: center; color: var(--color-ppal); margin: 30px 0 20px;
+        }
+
+        .ejercicios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .ejercicio-card {
+            background: white; padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            position: relative;
+            border-left: 7px solid var(--color-ppal);
+        }
+        .ejercicio-card h3 {
+            color: var(--color-ppal); margin-top: 0;
+        }
+        label { display: block; margin: 10px 0 5px; font-weight: bold; }
+        input[type="range"], input[type="number"] {
+            width: 100%; padding: 6px; margin-bottom: 10px;
+        }
+        .resultado-solver {
+            background-color: #f0f8ff; padding: 12px;
+            border-radius: 6px; margin-top: 15px;
+            font-weight: bold; color: var(--color-secundario);
+        }
+
+        .app-footer {
+            background-color: #37474f; color: white;
+            padding: 25px 0; text-align: center; margin-top: 40px;
+        }
+        .contenido-pie { max-width: 1200px; margin: 0 auto; padding: 0 var(--espaciado-ppal); }
+        .footer-links a {
+            color: #b0bec5; margin: 0 8px;
+            font-size: 0.85em; white-space: nowrap;
+        }
+        .footer-links a:hover { color: white; }
+
+        .language-selector {
+            display: flex; gap: 6px; margin-top: 15px;
+        }
+        .language-selector button {
+            background: none; border: 1px solid white;
+            color: white; padding: 5px 10px;
+            border-radius: 4px; cursor: pointer; font-size: 0.9em;
+        }
+        .language-selector button.active {
+            background: white; color: var(--color-ppal); font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .contenido-ppal { flex-direction: column; }
+            .ejercicios-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="theme-es">
+    <header>
+        <div class="header-top">
+            <img src="Aula virtual de clase.png" alt="Luis Salinas" class="img-office">
+            <h1 data-lang-key="titulo-pagina">Solver en Excel</h1>
+            <div class="language-selector">
+                <button data-lang="es">ES</button>
+                <button data-lang="en">EN</button>
+                <button data-lang="ca">CA</button>
+                <button data-lang="fr">FR</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="contenido-ppal">
+            <div class="intro-card">
+                <p data-lang-key="descripcion-solver">
+                    <strong>Solver</strong> es una herramienta de análisis de Excel para resolver problemas de optimización. Permite encontrar el valor óptimo (máximo o mínimo) de una fórmula en una celda, cambiando otras celdas y respetando restricciones.
+                </p>
+                <p data-lang-key="uso-practico">
+                    Se usa en logística, finanzas, producción, asignación de recursos, etc.
+                </p>
+            </div>
+        </div>
+
+        <section class="sect-ppal2">
+            <h1 data-lang-key="ejercicios-practica">Ejercicios Interactivos con Solver</h1>
+            <div class="ejercicios-grid" id="ejercicios-container">
+                <!-- Ejercicios generados con JS -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="contenido-pie">
+            <p data-lang-key="copyright">&copy; Noviembre 2025 - Luis M. Salinas</p>
+            <div class="footer-links">
+                <a href="#" data-lang-key="politica-privacidad">🔋 Política de Privacidad</a>
+                <a href="#" data-lang-key="terminos-uso">⏳ Términos de Uso</a>
+                <a href="#" data-lang-key="contacto-footer">🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO</a>
+                <a href="#" data-lang-key="telefono">☎️ Teléfono: +34 673 484 940</a>
+                <a href="#" data-lang-key="soporte-tecnico">⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make</a>
+                <a href="#" data-lang-key="email">📧 Email: lsalinasuban@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            'es': {
+                'titulo-pagina': 'Solver en Excel',
+                'descripcion-solver': '<strong>Solver</strong> es una herramienta de análisis de Excel para resolver problemas de optimización. Permite encontrar el valor óptimo (máximo o mínimo) de una fórmula en una celda, cambiando otras celdas y respetando restricciones.',
+                'uso-practico': 'Se usa en logística, finanzas, producción, asignación de recursos, etc.',
+                'ejercicios-practica': 'Ejercicios Interactivos con Solver',
+                'ejercicio-titulo': 'Ejercicio',
+                'objetivo': 'Objetivo:',
+                'restriccion': 'Restricción:',
+                'ajustar': 'Ajustar:',
+                'resultado': 'Resultado estimado:',
+                'copyright': '© Noviembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privacidad',
+                'terminos-uso': '⏳ Términos de Uso',
+                'contacto-footer': '🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO',
+                'telefono': '☎️ Teléfono: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'en': {
+                'titulo-pagina': 'Solver in Excel',
+                'descripcion-solver': '<strong>Solver</strong> is an Excel add-in for optimization problems. It finds the optimal (max/min) value of a target cell by changing variable cells under constraints.',
+                'uso-practico': 'Used in logistics, finance, production, resource allocation, etc.',
+                'ejercicios-practica': 'Interactive Solver Exercises',
+                'ejercicio-titulo': 'Exercise',
+                'objetivo': 'Objective:',
+                'restriccion': 'Constraint:',
+                'ajustar': 'Adjust:',
+                'resultado': 'Estimated result:',
+                'copyright': '© November 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Privacy Policy',
+                'terminos-uso': '⏳ Terms of Use',
+                'contacto-footer': '🛂 Contact: Luis M. Salinas - Electronics Technologist - UDO',
+                'telefono': '☎️ Phone: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Technical Support: Web Design | AI Agents & Workflows in Make',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'ca': {
+                'titulo-pagina': 'Solver a Excel',
+                'descripcion-solver': '<strong>Solver</strong> és una eina d’Excel per a problemes d’optimització. Troba el valor òptim (màx/min) d’una cel·la objectiu canviant altres i respectant restriccions.',
+                'uso-practico': 'S’utilitza en logística, finances, producció, assignació de recursos, etc.',
+                'ejercicios-practica': 'Exercicis interactius amb Solver',
+                'ejercicio-titulo': 'Exercici',
+                'objetivo': 'Objectiu:',
+                'restriccion': 'Restricció:',
+                'ajustar': 'Ajustar:',
+                'resultado': 'Resultat estimat:',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privacitat',
+                'terminos-uso': '⏳ Termes d’Ús',
+                'contacto-footer': '🛂 Contacte: Luis M. Salinas - Tecnòleg Electrònic - UDO',
+                'telefono': '☎️ Telèfon: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Suport Tècnic: Disseny Web | Agents IA i Workflows a Make',
+                'email': '📧 Correu: lsalinasuban@gmail.com'
+            },
+            'fr': {
+                'titulo-pagina': 'Solveur dans Excel',
+                'descripcion-solver': '<strong>Le Solveur</strong> est un complément Excel pour résoudre des problèmes d’optimisation. Il trouve la valeur optimale (max/min) d’une cellule cible en modifiant d’autres cellules sous contraintes.',
+                'uso-practico': 'Utilisé en logistique, finance, production, allocation de ressources, etc.',
+                'ejercicios-practica': 'Exercices interactifs avec le Solveur',
+                'ejercicio-titulo': 'Exercice',
+                'objetivo': 'Objectif :',
+                'restriccion': 'Contrainte :',
+                'ajustar': 'Ajuster :',
+                'resultado': 'Résultat estimé :',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Politique de Confidentialité',
+                'terminos-uso': '⏳ Conditions d’Utilisation',
+                'contacto-footer': '🛂 Contact : Luis M. Salinas - Technologue Électronique - UDO',
+                'telefono': '☎️ Téléphone : +34 673 484 940',
+                'soporte-tecnico': '⚒️ Support Technique : Conception Web | Agents IA et Workflows dans Make',
+                'email': '📧 Email : lsalinasuban@gmail.com'
+            }
+        };
+
+        // Definición de 10 ejercicios interactivos de Solver
+        const ejerciciosData = {
+            es: [
+                { objetivo: "Maximizar beneficio: 5x + 3y", restriccion: "x + y ≤ 100", vars: { x: { min: 0, max: 100, val: 50 }, y: { min: 0, max: 100, val: 50 } }, fn: (v) => 5*v.x + 3*v.y },
+                { objetivo: "Minimizar costo: 2x + 4y", restriccion: "x ≥ 20, y ≥ 10", vars: { x: { min: 20, max: 100, val: 30 }, y: { min: 10, max: 80, val: 20 } }, fn: (v) => 2*v.x + 4*v.y },
+                { objetivo: "Maximizar ingresos: 10a + 7b", restriccion: "2a + b ≤ 200", vars: { a: { min: 0, max: 100, val: 60 }, b: { min: 0, max: 200, val: 80 } }, fn: (v) => 10*v.a + 7*v.b },
+                { objetivo: "Minimizar tiempo: x + y", restriccion: "3x + 2y ≥ 120", vars: { x: { min: 0, max: 100, val: 40 }, y: { min: 0, max: 100, val: 40 } }, fn: (v) => v.x + v.y },
+                { objetivo: "Maximizar utilidad: 8p + 6q", restriccion: "p + 2q ≤ 150", vars: { p: { min: 0, max: 150, val: 70 }, q: { min: 0, max: 75, val: 40 } }, fn: (v) => 8*v.p + 6*v.q },
+                { objetivo: "Minimizar desperdicio: 0.5x + y", restriccion: "x + y ≥ 50", vars: { x: { min: 0, max: 100, val: 30 }, y: { min: 0, max: 100, val: 30 } }, fn: (v) => 0.5*v.x + v.y },
+                { objetivo: "Maximizar producción: 12m + 9n", restriccion: "4m + 3n ≤ 480", vars: { m: { min: 0, max: 120, val: 60 }, n: { min: 0, max: 160, val: 80 } }, fn: (v) => 12*v.m + 9*v.n },
+                { objetivo: "Minimizar gasto: 15r + 10s", restriccion: "r ≥ 10, s ≥ 20", vars: { r: { min: 10, max: 50, val: 20 }, s: { min: 20, max: 60, val: 30 } }, fn: (v) => 15*v.r + 10*v.s },
+                { objetivo: "Maximizar ventas: 20u + 15v", restriccion: "u + v ≤ 80", vars: { u: { min: 0, max: 80, val: 40 }, v: { min: 0, max: 80, val: 40 } }, fn: (v) => 20*v.u + 15*v.v },
+                { objetivo: "Minimizar riesgo: 3x + 2y", restriccion: "x + y ≥ 100", vars: { x: { min: 0, max: 150, val: 60 }, y: { min: 0, max: 150, val: 60 } }, fn: (v) => 3*v.x + 2*v.y }
+            ]
+        };
+
+        // Traducir descripciones por idioma (simplificado: mantenemos lógica en ES, solo cambiamos textos)
+        const ejerciciosTraducidos = {
+            'es': ejerciciosData.es,
+            'en': ejerciciosData.es.map(e => ({ ...e })), // misma lógica, textos ya traducidos en UI
+            'ca': ejerciciosData.es.map(e => ({ ...e })),
+            'fr': ejerciciosData.es.map(e => ({ ...e }))
+        };
+
+        function renderExercises(lang) {
+            const container = document.getElementById('ejercicios-container');
+            container.innerHTML = '';
+            const t = translations[lang];
+            const ejercicios = ejerciciosTraducidos[lang];
+
+            ejercicios.forEach((ej, i) => {
+                const num = i + 1;
+                const card = document.createElement('div');
+                card.className = 'ejercicio-card';
+                let inputsHtml = '';
+                let vars = {};
+
+                // Clonar valores iniciales
+                Object.keys(ej.vars).forEach(key => {
+                    vars[key] = ej.vars[key].val;
+                });
+
+                Object.entries(ej.vars).forEach(([key, config]) => {
+                    inputsHtml += `
+                        <label>${key.toUpperCase()}:</label>
+                        <input type="range" id="var-${num}-${key}" min="${config.min}" max="${config.max}" value="${config.val}" oninput="updateResult(${num})">
+                        <input type="number" id="num-${num}-${key}" min="${config.min}" max="${config.max}" value="${config.val}" oninput="syncSlider(${num}, '${key}')" style="width:80px;">
+                    `;
+                });
+
+                card.innerHTML = `
+                    <h3>${t['ejercicio-titulo']} ${num}</h3>
+                    <p><strong>${t['objetivo']}</strong> ${ej.objetivo}</p>
+                    <p><strong>${t['restriccion']}</strong> ${ej.restriccion}</p>
+                    <p><strong>${t['ajustar']}</strong></p>
+                    ${inputsHtml}
+                    <div class="resultado-solver" id="resultado-${num}">
+                        ${t['resultado']} <span id="valor-${num}">${ej.fn(vars)}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Funciones globales para interactividad
+        window.syncSlider = function(num, key) {
+            const numInput = document.getElementById(`num-${num}-${key}`);
+            const rangeInput = document.getElementById(`var-${num}-${key}`);
+            rangeInput.value = numInput.value;
+            updateResult(num);
+        };
+
+        window.updateResult = function(num) {
+            const ej = ejerciciosTraducidos[currentLang][num - 1];
+            const vars = {};
+            Object.keys(ej.vars).forEach(key => {
+                vars[key] = parseFloat(document.getElementById(`var-${num}-${key}`).value);
+            });
+            const result = ej.fn(vars);
+            document.getElementById(`valor-${num}`).textContent = result.toFixed(2);
+            document.getElementById(`num-${num}-${key}`).value = vars[key]; // sincronizar número
+        };
+
+        let currentLang = 'es';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const elements = document.querySelectorAll('[data-lang-key]');
+            const t = translations[lang];
+            document.body.className = document.body.className.replace(/\btheme-\w+\b/g, '').trim();
+            document.body.classList.add(`theme-${lang}`);
+
+            elements.forEach(el => {
+                const key = el.dataset.langKey;
+                if (t[key]) {
+                    if (el.tagName === 'H1' || el.tagName === 'P') {
+                        el.innerHTML = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            renderExercises(lang);
+            localStorage.setItem('userLang', lang);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('userLang') || 'es';
+            setLanguage(savedLang);
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+            });
+        });
+    </script>
+</body>
+</html>

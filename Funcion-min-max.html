@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Luis M. Salinas">
+    <title>Funciones MÍNIMO y MÁXIMO - Excel</title>
+    <style>
+        /* --- VARIABLES BASE --- */
+        :root {
+            --espaciado-ppal: 15px;
+            --borde-radio: 8px;
+            --sombra-nav: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --sombra-card: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* === TEMAS POR IDIOMA === */
+        .theme-es { --color-ppal: #d32f2f; --color-secundario: #b71c1c; --color-fondo: #ffebee; --color-texto: #263238; }
+        .theme-en { --color-ppal: #0288d1; --color-secundario: #01579b; --color-fondo: #e1f5fe; --color-texto: #1b5e20; }
+        .theme-ca { --color-ppal: #388e3c; --color-secundario: #1b5e20; --color-fondo: #e8f5e9; --color-texto: #d32f2f; }
+        .theme-fr { --color-ppal: #f57c00; --color-secundario: #e65100; --color-fondo: #fff3e0; --color-texto: #1a237e; }
+
+        /* Botón Volver */
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background-color: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            align-self: center;
+            margin-right: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-back svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .action-button {
+            background-color: var(--color-ppal);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            margin: 0 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: var(--color-secundario);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back span {
+                display: none;
+            }
+            .btn-back {
+                padding: 10px;
+            }
+        }
+
+        /* --- ESTILOS BASE --- */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        header {
+            background-color: var(--color-ppal);
+            box-shadow: var(--sombra-nav);
+            padding: 0 var(--espaciado-ppal);
+            margin-bottom: 30px;
+        }
+        .header-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .img-office {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            margin-bottom: 12px;
+        }
+        .header-top h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .contenido-ppal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--espaciado-ppal) 30px;
+        }
+
+        .rect-uno {
+            width: 100%;
+            max-width: 480px; /* Aprox. 40% of 1200px, pero flexible */
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            text-align: center;
+        }
+
+        .rect-dos {
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            /* Ajuste automático al contenido */
+            width: fit-content;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .rect-dos p {
+            margin: 0;
+            text-align: center; 
+        }
+        .sect-ppal1, .sect-ppal2 {
+            max-width: 1200px;
+            margin: 10px auto 40px;
+            padding: 0 var(--espaciado-ppal);
+        }
+        .sect-ppal1 > h1, .sect-ppal2 > h1 {
+            text-align: center;
+            color: var(--color-ppal);
+            margin: 30px 0 20px;
+        }
+        .doble-columna {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .section1, .section1a {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+        }
+        .section1 {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+        .section1a {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicios-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .ejercicio-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            position: relative;
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicio-par { border-left: 2px solid var(--color-ppal); }
+        .ejercicio-par::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -15px;
+            width: 2px;
+            background-color: var(--color-ppal);
+        }
+        .ejercicio-card h3 {
+            color: var(--color-ppal);
+            margin-top: 0;
+        }
+        .formula {
+            background-color: #f0f4ff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        .resultado {
+            font-weight: bold;
+            color: var(--color-secundario);
+        }
+
+        .app-footer {
+            background-color: #37474f;
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .contenido-pie { max-width: 1200px; margin: 0 auto; padding: 0 var(--espaciado-ppal); }
+        .footer-links a {
+            color: #b0bec5;
+            margin: 0 8px;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+        .footer-links a:hover { color: white; }
+
+        .language-selector {
+            display: flex;
+            gap: 6px;
+            margin-top: 15px;
+        }
+        .language-selector button {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .language-selector button.active {
+            background: white;
+            color: var(--color-ppal);
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .contenido-ppal, .doble-columna, .ejercicios-grid {
+                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+            .ejercicio-par::before { display: none; }
+            .rect-uno, .rect-dos { flex: 1; }
+        }
+    </style>
+</head>
+<body class="theme-es">
+    <header>
+        <div class="header-top">
+            <a href="index.html" class="btn-back" aria-label="Volver a la página principal">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                <span data-lang-key="btn-volver">Volver</span>
+            </a>
+            <img src="./Aula virtual de clase.png" alt="Luis Salinas" class="img-office">
+            <h1 data-lang-key="titulo-pagina">Funciones MÍNIMO y MÁXIMO en Excel</h1>
+            <div class="language-selector">
+                <button data-lang="es">ES</button>
+                <button data-lang="en">EN</button>
+                <button data-lang="ca">CA</button>
+                <button data-lang="fr">FR</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+         <!--🔧 Código actualizado (solo la sección modificada):
+         1. Modificación en el bloque <main> centrado del párrafo -->
+            <div class="contenido-ppal">
+                <div class="rect-uno">
+                    <img src="Profe Salinas6.png" alt="Función SI" style="width:100%; border-radius:8px;">
+                    <div style="text-align:center; color:#666;">Profesor Luis M.Salinas</div>
+                </div>
+            <div class="rect-dos">
+                <p data-lang-key="descripcion-minmax">Las funciones <strong>MÍNIMO</strong> y <strong>MÁXIMO</strong> en Excel permiten encontrar el valor más pequeño y el más grande de un conjunto de números. Son esenciales para análisis de datos, estadísticas, control de calidad y más.</p>
+            </div>
+        </div>
+
+        <section class="sect-ppal1">
+            <h1 data-lang-key="sintaxis-y-desarrollo">Sintaxis y Desarrollo</h1>
+            <div class="doble-columna">
+                <section class="section1">
+                    <h2 data-lang-key="sintaxis-min">Sintaxis – MÍNIMO</h2>
+                    <p data-lang-key="sintaxis-texto-min">La sintaxis de la función MÍNIMO es:</p>
+                    <div class="formula">=MÍNIMO(número1; [número2]; ...)</div>
+                    <ul>
+                        <li data-lang-key="sintaxis-li1-min"><strong>número1</strong>: primer valor, celda o rango (obligatorio).</li>
+                        <li data-lang-key="sintaxis-li2-min">Ignora celdas vacías y texto.</li>
+                        <li data-lang-key="sintaxis-li3-min">Devuelve 0 si no hay números.</li>
+                    </ul>
+                </section>
+                <section class="section1a">
+                    <h2 data-lang-key="sintaxis-max">Sintaxis – MÁXIMO</h2>
+                    <p data-lang-key="sintaxis-texto-max">La sintaxis de la función MÁXIMO es:</p>
+                    <div class="formula">=MÁXIMO(número1; [número2]; ...)</div>
+                    <ul>
+                        <li data-lang-key="sintaxis-li1-max"><strong>número1</strong>: primer valor, celda o rango (obligatorio).</li>
+                        <li data-lang-key="sintaxis-li2-max">Ignora celdas vacías y texto.</li>
+                        <li data-lang-key="sintaxis-li3-max">Devuelve 0 si no hay números.</li>
+                    </ul>
+                </section>
+            </div>
+        </section>
+
+        <div class="action-buttons">
+            <button class="action-button" id="btn-nuevos-ejercicios" data-lang-key="btn-nuevos-ejercicios">Generar nuevos ejercicios</button>
+            <button class="action-button" id="btn-descargar" data-lang-key="btn-descargar">Descargar ejercicios (.txt)</button>
+        </div>
+
+        <section class="sect-ppal2">
+            <h1 data-lang-key="ejercicios-practica">Ejercicios de Práctica</h1>
+            <div class="ejercicios-grid" id="ejercicios-container">
+                <!-- Generados con JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="contenido-pie">
+            <p data-lang-key="copyright">&copy; Noviembre 2025 - Luis M. Salinas</p>
+            <div class="footer-links">
+                <a href="#" data-lang-key="politica-privacidad">🔋 Política de Privacidad</a>
+                <a href="#" data-lang-key="terminos-uso">⏳ Términos de Uso</a>
+                <a href="#" data-lang-key="contacto-footer">🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO</a>
+                <a href="#" data-lang-key="telefono">☎️ Teléfono: +34 673 484 940</a>
+                <a href="#" data-lang-key="soporte-tecnico">⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make</a>
+                <a href="#" data-lang-key="email">📧 Email: lsalinasuban@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            'es': {
+                'titulo-pagina': 'Funciones MÍNIMO y MÁXIMO en Excel',
+                'btn-volver': 'Volver',
+                'descripcion-minmax': 'Las funciones <strong>MÍNIMO</strong> y <strong>MÁXIMO</strong> en Excel permiten encontrar el valor más pequeño y el más grande de un conjunto de números. Son esenciales para análisis de datos, estadísticas, control de calidad y más.',
+                'sintaxis-y-desarrollo': 'Sintaxis y Desarrollo',
+                'sintaxis-min': 'Sintaxis – MÍNIMO',
+                'sintaxis-texto-min': 'La sintaxis de la función MÍNIMO es:',
+                'sintaxis-li1-min': '<strong>número1</strong>: primer valor, celda o rango (obligatorio).',
+                'sintaxis-li2-min': 'Ignora celdas vacías y texto.',
+                'sintaxis-li3-min': 'Devuelve 0 si no hay números.',
+                'sintaxis-max': 'Sintaxis – MÁXIMO',
+                'sintaxis-texto-max': 'La sintaxis de la función MÁXIMO es:',
+                'sintaxis-li1-max': '<strong>número1</strong>: primer valor, celda o rango (obligatorio).',
+                'sintaxis-li2-max': 'Ignora celdas vacías y texto.',
+                'sintaxis-li3-max': 'Devuelve 0 si no hay números.',
+                'ejercicios-practica': 'Ejercicios de Práctica',
+                'ejercicio-titulo': 'Ejercicio',
+                'datos': 'Datos:',
+                'formula-min': 'Fórmula MÍNIMO:',
+                'formula-max': 'Fórmula MÁXIMO:',
+                'resultado-min': 'Mínimo:',
+                'resultado-max': 'Máximo:',
+                'btn-nuevos-ejercicios': 'Generar nuevos ejercicios',
+                'btn-descargar': 'Descargar ejercicios (.txt)',
+                'copyright': '© Noviembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privacidad',
+                'terminos-uso': '⏳ Términos de Uso',
+                'contacto-footer': '🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO',
+                'telefono': '☎️ Teléfono: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'en': {
+                'titulo-pagina': 'MIN and MAX Functions in Excel',
+                'btn-volver': 'Back',
+                'descripcion-minmax': 'The <strong>MIN</strong> and <strong>MAX</strong> functions in Excel find the smallest and largest values in a set of numbers. Essential for data analysis, statistics, quality control, and more.',
+                'sintaxis-y-desarrollo': 'Syntax and Explanation',
+                'sintaxis-min': 'Syntax – MIN',
+                'sintaxis-texto-min': 'The MIN function syntax is:',
+                'sintaxis-li1-min': '<strong>number1</strong>: first value, cell, or range (required).',
+                'sintaxis-li2-min': 'Ignores empty cells and text.',
+                'sintaxis-li3-min': 'Returns 0 if no numbers are found.',
+                'sintaxis-max': 'Syntax – MAX',
+                'sintaxis-texto-max': 'The MAX function syntax is:',
+                'sintaxis-li1-max': '<strong>number1</strong>: first value, cell, or range (required).',
+                'sintaxis-li2-max': 'Ignores empty cells and text.',
+                'sintaxis-li3-max': 'Returns 0 if no numbers are found.',
+                'ejercicios-practica': 'Practice Exercises',
+                'ejercicio-titulo': 'Exercise',
+                'datos': 'Data:',
+                'formula-min': 'MIN Formula:',
+                'formula-max': 'MAX Formula:',
+                'resultado-min': 'Minimum:',
+                'resultado-max': 'Maximum:',
+                'btn-nuevos-ejercicios': 'Generate new exercises',
+                'btn-descargar': 'Download exercises (.txt)',
+                'copyright': '© November 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Privacy Policy',
+                'terminos-uso': '⏳ Terms of Use',
+                'contacto-footer': '🛂 Contact: Luis M. Salinas - Electronics Technologist - UDO',
+                'telefono': '☎️ Phone: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Technical Support: Web Design & Development | AI Agents & Make Workflows',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'ca': {
+                'titulo-pagina': 'Funcions MÍNIM i MÀXIM a Excel',
+                'btn-volver': 'Tornar',
+                'descripcion-minmax': 'Les funcions <strong>MÍNIM</strong> i <strong>MÀXIM</strong> a Excel permeten trobar el valor més petit i el més gran d’un conjunt de nombres. Són essencials per a l’anàlisi de dades, estadístiques, control de qualitat, etc.',
+                'sintaxis-y-desarrollo': 'Sintaxi i Desenvolupament',
+                'sintaxis-min': 'Sintaxi – MÍNIM',
+                'sintaxis-texto-min': 'La sintaxi de la funció MÍNIM és:',
+                'sintaxis-li1-min': '<strong>número1</strong>: primer valor, cel·la o rang (obligatori).',
+                'sintaxis-li2-min': 'Ignora cel·les buides i text.',
+                'sintaxis-li3-min': 'Retorna 0 si no hi ha números.',
+                'sintaxis-max': 'Sintaxi – MÀXIM',
+                'sintaxis-texto-max': 'La sintaxi de la funció MÀXIM és:',
+                'sintaxis-li1-max': '<strong>número1</strong>: primer valor, cel·la o rang (obligatori).',
+                'sintaxis-li2-max': 'Ignora cel·les buides i text.',
+                'sintaxis-li3-max': 'Retorna 0 si no hi ha números.',
+                'ejercicios-practica': 'Exercicis pràctics',
+                'ejercicio-titulo': 'Exercici',
+                'datos': 'Dades:',
+                'formula-min': 'Fórmula MÍNIM:',
+                'formula-max': 'Fórmula MÀXIM:',
+                'resultado-min': 'Mínim:',
+                'resultado-max': 'Màxim:',
+                'btn-nuevos-ejercicios': 'Generar nous exercicis',
+                'btn-descargar': 'Descarregar exercicis (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privadesa',
+                'terminos-uso': '⏳ Termes d’Ús',
+                'contacto-footer': '🛂 Contacte: Luis M. Salinas - Tecnòleg Electrònic - UDO',
+                'telefono': '☎️ Telèfon: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Suport Tècnic: Disseny i Confecció de Pàgines Web | Desenvolupament d’Agents i Fluxos a Make',
+                'email': '📧 Correu: lsalinasuban@gmail.com'
+            },
+            'fr': {
+                'titulo-pagina': 'Fonctions MIN et MAX dans Excel',
+                'btn-volver': 'Retour',
+                'descripcion-minmax': 'Les fonctions <strong>MIN</strong> et <strong>MAX</strong> dans Excel permettent de trouver la plus petite et la plus grande valeur d’un ensemble de nombres. Elles sont essentielles pour l’analyse de données, les statistiques, le contrôle qualité, etc.',
+                'sintaxis-y-desarrollo': 'Syntaxe et Explication',
+                'sintaxis-min': 'Syntaxe – MIN',
+                'sintaxis-texto-min': 'La syntaxe de la fonction MIN est :',
+                'sintaxis-li1-min': '<strong>nombre1</strong> : première valeur, cellule ou plage (obligatoire).',
+                'sintaxis-li2-min': 'Ignore les cellules vides et le texte.',
+                'sintaxis-li3-min': 'Renvoie 0 s’il n’y a aucun nombre.',
+                'sintaxis-max': 'Syntaxe – MAX',
+                'sintaxis-texto-max': 'La syntaxe de la fonction MAX est :',
+                'sintaxis-li1-max': '<strong>nombre1</strong> : première valeur, cellule ou plage (obligatoire).',
+                'sintaxis-li2-max': 'Ignore les cellules vides et le texte.',
+                'sintaxis-li3-max': 'Renvoie 0 s’il n’y a aucun nombre.',
+                'ejercicios-practica': 'Exercices pratiques',
+                'ejercicio-titulo': 'Exercice',
+                'datos': 'Données :',
+                'formula-min': 'Formule MIN :',
+                'formula-max': 'Formule MAX :',
+                'resultado-min': 'Minimum :',
+                'resultado-max': 'Maximum :',
+                'btn-nuevos-ejercicios': 'Générer de nouveaux exercices',
+                'btn-descargar': 'Télécharger les exercices (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Politique de Confidentialité',
+                'terminos-uso': '⏳ Conditions d’Utilisation',
+                'contacto-footer': '🛂 Contact : Luis M. Salinas - Technologue Électronique - UDO',
+                'telefono': '☎️ Téléphone : +34 673 484 940',
+                'soporte-tecnico': '⚒️ Support Technique : Conception de Sites Web | Développement d’Agents et Workflows sur Make',
+                'email': '📧 Email : lsalinasuban@gmail.com'
+            }
+        };
+
+        // Generador de ejercicios combinados MÍN/MÁX
+        function generateRandomMinMaxExercises(count = 10) {
+            const ejercicios = [];
+            for (let i = 0; i < count; i++) {
+                const len = 4 + Math.floor(Math.random() * 6); // 4 a 9 números
+                const datos = Array.from({ length: len }, () => Math.floor(Math.random() * 100) + 1);
+                const min = Math.min(...datos);
+                const max = Math.max(...datos);
+                ejercicios.push({
+                    datos: datos,
+                    formulaMin: `=MÍNIMO(${String.fromCharCode(65 + i)}1:${String.fromCharCode(65 + i)}${len})`,
+                    formulaMax: `=MÁXIMO(${String.fromCharCode(65 + i)}1:${String.fromCharCode(65 + i)}${len})`,
+                    resultadoMin: min,
+                    resultadoMax: max
+                });
+            }
+            return ejercicios;
+        }
+
+        let currentExercises = generateRandomMinMaxExercises();
+
+        function renderExercises(lang) {
+            const container = document.getElementById('ejercicios-container');
+            container.innerHTML = '';
+            const t = translations[lang];
+
+            currentExercises.forEach((ej, i) => {
+                const num = i + 1;
+                const card = document.createElement('div');
+                card.className = `ejercicio-card ${num % 2 === 0 ? 'ejercicio-par' : ''}`;
+                card.innerHTML = `
+                    <h3>${t['ejercicio-titulo']} ${num}</h3>
+                    <p><strong>${t['datos']}</strong> ${ej.datos.join(', ')}</p>
+                    <p><strong>${t['formula-min']}</strong> <span class="formula">${ej.formulaMin}</span></p>
+                    <p><strong>${t['resultado-min']}</strong> <span class="resultado">${ej.resultadoMin}</span></p>
+                    <p><strong>${t['formula-max']}</strong> <span class="formula">${ej.formulaMax}</span></p>
+                    <p><strong>${t['resultado-max']}</strong> <span class="resultado">${ej.resultadoMax}</span></p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('[data-lang-key]');
+            const t = translations[lang];
+            document.body.className = document.body.className.replace(/\btheme-\w+\b/g, '').trim();
+            document.body.classList.add(`theme-${lang}`);
+
+            elements.forEach(el => {
+                const key = el.dataset.langKey;
+                if (t[key]) {
+                    if (key.includes('descripcion') || key.includes('sintaxis-li')) {
+                        el.innerHTML = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            renderExercises(lang);
+            localStorage.setItem('userLang', lang);
+        }
+
+        function downloadExercises(lang) {
+            const t = translations[lang];
+            let content = `${t['ejercicios-practica']}\n\n`;
+            currentExercises.forEach((ej, i) => {
+                content += `${t['ejercicio-titulo']} ${i + 1}\n`;
+                content += `${t['datos']} ${ej.datos.join(', ')}\n`;
+                content += `${t['formula-min']} ${ej.formulaMin} → ${t['resultado-min']} ${ej.resultadoMin}\n`;
+                content += `${t['formula-max']} ${ej.formulaMax} → ${t['resultado-max']} ${ej.resultadoMax}\n\n`;
+            });
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ejercicios_minmax_${lang}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('userLang') || 'es';
+            setLanguage(savedLang);
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+            });
+
+            document.getElementById('btn-nuevos-ejercicios').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                currentExercises = generateRandomMinMaxExercises();
+                renderExercises(currentLang);
+            });
+
+            document.getElementById('btn-descargar').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                downloadExercises(currentLang);
+            });
+        });
+    </script>
+</body>
+</html>

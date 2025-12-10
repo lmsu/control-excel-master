@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Luis M. Salinas">
+    <title>Funciones IZQUIERDA y DERECHA - Excel</title>
+    <style>
+        /* --- VARIABLES BASE --- */
+        :root {
+            --espaciado-ppal: 15px;
+            --borde-radio: 8px;
+            --sombra-nav: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --sombra-card: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* === TEMAS POR IDIOMA === */
+        .theme-es { --color-ppal: #6a1b9a; --color-secundario: #4a148c; --color-fondo: #f3e5f5; --color-texto: #263238; }
+        .theme-en { --color-ppal: #d32f2f; --color-secundario: #b71c1c; --color-fondo: #ffebee; --color-texto: #1b5e20; }
+        .theme-ca { --color-ppal: #0288d1; --color-secundario: #01579b; --color-fondo: #e1f5fe; --color-texto: #d32f2f; }
+        .theme-fr { --color-ppal: #388e3c; --color-secundario: #1b5e20; --color-fondo: #e8f5e9; --color-texto: #1a237e; }
+
+        /* Botón Volver */
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background-color: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            align-self: center;
+            margin-right: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-back svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .action-button {
+            background-color: var(--color-ppal);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            margin: 0 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: var(--color-secundario);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back span {
+                display: none;
+            }
+            .btn-back {
+                padding: 10px;
+            }
+        }
+
+        /* --- ESTILOS BASE --- */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        header {
+            background-color: var(--color-ppal);
+            box-shadow: var(--sombra-nav);
+            padding: 0 var(--espaciado-ppal);
+            margin-bottom: 30px;
+        }
+        .header-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .img-office {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            margin-bottom: 12px;
+        }
+        .header-top h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .contenido-ppal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--espaciado-ppal) 30px;
+        }
+
+        .rect-uno {
+            width: 100%;
+            max-width: 480px; /* Aprox. 40% of 1200px, pero flexible */
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            text-align: center;
+        }
+
+        .rect-dos {
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            /* Ajuste automático al contenido */
+            width: fit-content;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .rect-dos p {
+            margin: 0;
+            text-align: center; 
+        }
+
+        .sect-ppal1, .sect-ppal2 {
+            max-width: 1200px;
+            margin: 10px auto 40px;
+            padding: 0 var(--espaciado-ppal);
+        }
+        .sect-ppal1 > h1, .sect-ppal2 > h1 {
+            text-align: center;
+            color: var(--color-ppal);
+            margin: 30px 0 20px;
+        }
+        .doble-columna {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .section1, .section1a {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+        }
+        .section1 {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+        .section1a {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicios-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .ejercicio-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            position: relative;
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicio-par { border-left: 2px solid var(--color-ppal); }
+        .ejercicio-par::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -15px;
+            width: 2px;
+            background-color: var(--color-ppal);
+        }
+        .ejercicio-card h3 {
+            color: var(--color-ppal);
+            margin-top: 0;
+        }
+        .formula {
+            background-color: #f0f4ff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        .resultado {
+            font-weight: bold;
+            color: var(--color-secundario);
+        }
+
+        .app-footer {
+            background-color: #37474f;
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .contenido-pie { max-width: 1200px; margin: 0 auto; padding: 0 var(--espaciado-ppal); }
+        .footer-links a {
+            color: #b0bec5;
+            margin: 0 8px;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+        .footer-links a:hover { color: white; }
+
+        .language-selector {
+            display: flex;
+            gap: 6px;
+            margin-top: 15px;
+        }
+        .language-selector button {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .language-selector button.active {
+            background: white;
+            color: var(--color-ppal);
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .contenido-ppal, .doble-columna, .ejercicios-grid {
+                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+            .ejercicio-par::before { display: none; }
+            .rect-uno, .rect-dos { flex: 1; }
+        }
+    </style>
+</head>
+<body class="theme-es">
+    <header>
+        <div class="header-top">
+            <a href="index.html" class="btn-back" aria-label="Volver a la página principal">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                <span data-lang-key="btn-volver">Volver</span>
+            </a>
+            <img src="./Aula virtual de clase.png" alt="Luis Salinas" class="img-office">
+            <h1 data-lang-key="titulo-pagina">Funciones IZQUIERDA y DERECHA en Excel</h1>
+            <div class="language-selector">
+                <button data-lang="es">ES</button>
+                <button data-lang="en">EN</button>
+                <button data-lang="ca">CA</button>
+                <button data-lang="fr">FR</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+         <!--🔧 Código actualizado (solo la sección modificada):
+         1. Modificación en el bloque <main> centrado del párrafo -->
+            <div class="contenido-ppal">
+                <div class="rect-uno">
+                    <img src="Profe Salinas5.png" alt="Función SI" style="width:100%; border-radius:8px;">
+                    <div style="text-align:center; color:#666;">Profesor Luis M.Salinas</div>
+                </div>
+            <div class="rect-dos">
+                <p data-lang-key="descripcion-izqder">Las funciones <strong>IZQUIERDA</strong> y <strong>DERECHA</strong> en Excel permiten extraer un número específico de caracteres desde el **inicio** o el **final** de una cadena de texto. Son ideales para manipular códigos, identificadores, correos y más.</p>
+            </div>
+        </div>
+
+        <section class="sect-ppal1">
+            <h1 data-lang-key="sintaxis-y-desarrollo">Sintaxis y Desarrollo</h1>
+            <div class="doble-columna">
+                <section class="section1">
+                    <h2 data-lang-key="sintaxis-izq">Sintaxis – IZQUIERDA</h2>
+                    <p data-lang-key="sintaxis-texto-izq">La sintaxis de la función IZQUIERDA es:</p>
+                    <div class="formula">=IZQUIERDA(texto; núm_de_caracteres)</div>
+                    <ul>
+                        <li data-lang-key="sintaxis-li1-izq"><strong>texto</strong>: cadena o referencia a celda (obligatorio).</li>
+                        <li data-lang-key="sintaxis-li2-izq"><strong>núm_de_caracteres</strong>: número de caracteres a extraer desde la izquierda.</li>
+                        <li data-lang-key="sintaxis-li3-izq">Si es 0, devuelve cadena vacía. Si es negativo, devuelve error.</li>
+                    </ul>
+                </section>
+                <section class="section1a">
+                    <h2 data-lang-key="sintaxis-der">Sintaxis – DERECHA</h2>
+                    <p data-lang-key="sintaxis-texto-der">La sintaxis de la función DERECHA es:</p>
+                    <div class="formula">=DERECHA(texto; núm_de_caracteres)</div>
+                    <ul>
+                        <li data-lang-key="sintaxis-li1-der"><strong>texto</strong>: cadena o referencia a celda (obligatorio).</li>
+                        <li data-lang-key="sintaxis-li2-der"><strong>núm_de_caracteres</strong>: número de caracteres a extraer desde la derecha.</li>
+                        <li data-lang-key="sintaxis-li3-der">Igual que IZQUIERDA: 0 → vacío; negativo → error.</li>
+                    </ul>
+                </section>
+            </div>
+        </section>
+
+        <div class="action-buttons">
+            <button class="action-button" id="btn-nuevos-ejercicios" data-lang-key="btn-nuevos-ejercicios">Generar nuevos ejercicios</button>
+            <button class="action-button" id="btn-descargar" data-lang-key="btn-descargar">Descargar ejercicios (.txt)</button>
+        </div>
+
+        <section class="sect-ppal2">
+            <h1 data-lang-key="ejercicios-practica">Ejercicios de Práctica</h1>
+            <div class="ejercicios-grid" id="ejercicios-container">
+                <!-- Generados con JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="contenido-pie">
+            <p data-lang-key="copyright">&copy; Noviembre 2025 - Luis M. Salinas</p>
+            <div class="footer-links">
+                <a href="#" data-lang-key="politica-privacidad">🔋 Política de Privacidad</a>
+                <a href="#" data-lang-key="terminos-uso">⏳ Términos de Uso</a>
+                <a href="#" data-lang-key="contacto-footer">🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO</a>
+                <a href="#" data-lang-key="telefono">☎️ Teléfono: +34 673 484 940</a>
+                <a href="#" data-lang-key="soporte-tecnico">⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make</a>
+                <a href="#" data-lang-key="email">📧 Email: lsalinasuban@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            'es': {
+                'titulo-pagina': 'Funciones IZQUIERDA y DERECHA en Excel',
+                'btn-volver': 'Volver',
+                'descripcion-izqder': 'Las funciones <strong>IZQUIERDA</strong> y <strong>DERECHA</strong> en Excel permiten extraer un número específico de caracteres desde el <strong>inicio</strong> o el <strong>final</strong> de una cadena de texto. Son ideales para manipular códigos, identificadores, correos y más.',
+                'sintaxis-y-desarrollo': 'Sintaxis y Desarrollo',
+                'sintaxis-izq': 'Sintaxis – IZQUIERDA',
+                'sintaxis-texto-izq': 'La sintaxis de la función IZQUIERDA es:',
+                'sintaxis-li1-izq': '<strong>texto</strong>: cadena o referencia a celda (obligatorio).',
+                'sintaxis-li2-izq': '<strong>núm_de_caracteres</strong>: número de caracteres a extraer desde la izquierda.',
+                'sintaxis-li3-izq': 'Si es 0, devuelve cadena vacía. Si es negativo, devuelve error.',
+                'sintaxis-der': 'Sintaxis – DERECHA',
+                'sintaxis-texto-der': 'La sintaxis de la función DERECHA es:',
+                'sintaxis-li1-der': '<strong>texto</strong>: cadena o referencia a celda (obligatorio).',
+                'sintaxis-li2-der': '<strong>núm_de_caracteres</strong>: número de caracteres a extraer desde la derecha.',
+                'sintaxis-li3-der': 'Igual que IZQUIERDA: 0 → vacío; negativo → error.',
+                'ejercicios-practica': 'Ejercicios de Práctica',
+                'ejercicio-titulo': 'Ejercicio',
+                'datos': 'Texto original:',
+                'formula-izq': 'Fórmula IZQUIERDA:',
+                'formula-der': 'Fórmula DERECHA:',
+                'resultado-izq': 'Resultado IZQUIERDA:',
+                'resultado-der': 'Resultado DERECHA:',
+                'btn-nuevos-ejercicios': 'Generar nuevos ejercicios',
+                'btn-descargar': 'Descargar ejercicios (.txt)',
+                'copyright': '© Noviembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privacidad',
+                'terminos-uso': '⏳ Términos de Uso',
+                'contacto-footer': '🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO',
+                'telefono': '☎️ Teléfono: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'en': {
+                'titulo-pagina': 'LEFT and RIGHT Functions in Excel',
+                'btn-volver': 'Back',
+                'descripcion-izqder': 'The <strong>LEFT</strong> and <strong>RIGHT</strong> functions in Excel extract a specific number of characters from the <strong>start</strong> or <strong>end</strong> of a text string. Ideal for handling codes, IDs, emails, and more.',
+                'sintaxis-y-desarrollo': 'Syntax and Explanation',
+                'sintaxis-izq': 'Syntax – LEFT',
+                'sintaxis-texto-izq': 'The LEFT function syntax is:',
+                'sintaxis-li1-izq': '<strong>text</strong>: text string or cell reference (required).',
+                'sintaxis-li2-izq': '<strong>num_chars</strong>: number of characters to extract from the left.',
+                'sintaxis-li3-izq': 'If 0, returns empty string. If negative, returns error.',
+                'sintaxis-der': 'Syntax – RIGHT',
+                'sintaxis-texto-der': 'The RIGHT function syntax is:',
+                'sintaxis-li1-der': '<strong>text</strong>: text string or cell reference (required).',
+                'sintaxis-li2-der': '<strong>num_chars</strong>: number of characters to extract from the right.',
+                'sintaxis-li3-der': 'Same as LEFT: 0 → empty; negative → error.',
+                'ejercicios-practica': 'Practice Exercises',
+                'ejercicio-titulo': 'Exercise',
+                'datos': 'Original text:',
+                'formula-izq': 'LEFT Formula:',
+                'formula-der': 'RIGHT Formula:',
+                'resultado-izq': 'LEFT Result:',
+                'resultado-der': 'RIGHT Result:',
+                'btn-nuevos-ejercicios': 'Generate new exercises',
+                'btn-descargar': 'Download exercises (.txt)',
+                'copyright': '© November 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Privacy Policy',
+                'terminos-uso': '⏳ Terms of Use',
+                'contacto-footer': '🛂 Contact: Luis M. Salinas - Electronics Technologist - UDO',
+                'telefono': '☎️ Phone: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Technical Support: Web Design & Development | AI Agents & Make Workflows',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'ca': {
+                'titulo-pagina': 'Funcions ESQUERRA i DRETA a Excel',
+                'btn-volver': 'Tornar',
+                'descripcion-izqder': 'Les funcions <strong>ESQUERRA</strong> i <strong>DRETA</strong> a Excel permeten extreure un nombre específic de caràcters des de l’<strong>inici</strong> o el <strong>final</strong> d’una cadena de text. Ideals per manipular codis, identificadors, correus, etc.',
+                'sintaxis-y-desarrollo': 'Sintaxi i Desenvolupament',
+                'sintaxis-izq': 'Sintaxi – ESQUERRA',
+                'sintaxis-texto-izq': 'La sintaxi de la funció ESQUERRA és:',
+                'sintaxis-li1-izq': '<strong>text</strong>: cadena o referència a cel·la (obligatori).',
+                'sintaxis-li2-izq': '<strong>núm_de_caràcters</strong>: nombre de caràcters a extreure des de l’esquerra.',
+                'sintaxis-li3-izq': 'Si és 0, retorna cadena buida. Si és negatiu, retorna error.',
+                'sintaxis-der': 'Sintaxi – DRETA',
+                'sintaxis-texto-der': 'La sintaxi de la funció DRETA és:',
+                'sintaxis-li1-der': '<strong>text</strong>: cadena o referència a cel·la (obligatori).',
+                'sintaxis-li2-der': '<strong>núm_de_caràcters</strong>: nombre de caràcters a extreure des de la dreta.',
+                'sintaxis-li3-der': 'Igual que ESQUERRA: 0 → buit; negatiu → error.',
+                'ejercicios-practica': 'Exercicis pràctics',
+                'ejercicio-titulo': 'Exercici',
+                'datos': 'Text original:',
+                'formula-izq': 'Fórmula ESQUERRA:',
+                'formula-der': 'Fórmula DRETA:',
+                'resultado-izq': 'Resultat ESQUERRA:',
+                'resultado-der': 'Resultat DRETA:',
+                'btn-nuevos-ejercicios': 'Generar nous exercicis',
+                'btn-descargar': 'Descarregar exercicis (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privadesa',
+                'terminos-uso': '⏳ Termes d’Ús',
+                'contacto-footer': '🛂 Contacte: Luis M. Salinas - Tecnòleg Electrònic - UDO',
+                'telefono': '☎️ Telèfon: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Suport Tècnic: Disseny i Confecció de Pàgines Web | Desenvolupament d’Agents i Fluxos a Make',
+                'email': '📧 Correu: lsalinasuban@gmail.com'
+            },
+            'fr': {
+                'titulo-pagina': 'Fonctions GAUCHE et DROITE dans Excel',
+                'btn-volver': 'Retour',
+                'descripcion-izqder': 'Les fonctions <strong>GAUCHE</strong> et <strong>DROITE</strong> dans Excel permettent d’extraire un nombre donné de caractères depuis le <strong>début</strong> ou la <strong>fin</strong> d’une chaîne de texte. Idéales pour manipuler codes, identifiants, e-mails, etc.',
+                'sintaxis-y-desarrollo': 'Syntaxe et Explication',
+                'sintaxis-izq': 'Syntaxe – GAUCHE',
+                'sintaxis-texto-izq': 'La syntaxe de la fonction GAUCHE est :',
+                'sintaxis-li1-izq': '<strong>texte</strong> : chaîne ou référence de cellule (obligatoire).',
+                'sintaxis-li2-izq': '<strong>nombre_caractères</strong> : nombre de caractères à extraire depuis la gauche.',
+                'sintaxis-li3-izq': 'Si 0, renvoie une chaîne vide. Si négatif, renvoie une erreur.',
+                'sintaxis-der': 'Syntaxe – DROITE',
+                'sintaxis-texto-der': 'La syntaxe de la fonction DROITE est :',
+                'sintaxis-li1-der': '<strong>texte</strong> : chaîne ou référence de cellule (obligatoire).',
+                'sintaxis-li2-der': '<strong>nombre_caractères</strong> : nombre de caractères à extraire depuis la droite.',
+                'sintaxis-li3-der': 'Même que GAUCHE : 0 → vide ; négatif → erreur.',
+                'ejercicios-practica': 'Exercices pratiques',
+                'ejercicio-titulo': 'Exercice',
+                'datos': 'Texte original :',
+                'formula-izq': 'Formule GAUCHE :',
+                'formula-der': 'Formule DROITE :',
+                'resultado-izq': 'Résultat GAUCHE :',
+                'resultado-der': 'Résultat DROITE :',
+                'btn-nuevos-ejercicios': 'Générer de nouveaux exercices',
+                'btn-descargar': 'Télécharger les exercices (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Politique de Confidentialité',
+                'terminos-uso': '⏳ Conditions d’Utilisation',
+                'contacto-footer': '🛂 Contact : Luis M. Salinas - Technologue Électronique - UDO',
+                'telefono': '☎️ Téléphone : +34 673 484 940',
+                'soporte-tecnico': '⚒️ Support Technique : Conception de Sites Web | Développement d’Agents et Workflows sur Make',
+                'email': '📧 Email : lsalinasuban@gmail.com'
+            }
+        };
+
+        // Lista de textos de ejemplo
+        const sampleTexts = [
+            "LuisSalinas", "usuario@dominio.com", "COD-2025-XYZ", "ProductoA123", "Madrid2025",
+            "Cliente_999", "REF-ES-001", "TecnologoExcel", "UDO-2025", "SoporteTecnico"
+        ];
+
+        // Generador de ejercicios
+        function generateRandomLeftRightExercises(count = 10) {
+            const ejercicios = [];
+            for (let i = 0; i < count; i++) {
+                const texto = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+                const len = texto.length;
+                const nIzq = Math.min(Math.floor(Math.random() * 6) + 1, len);
+                const nDer = Math.min(Math.floor(Math.random() * 5) + 1, len);
+                const izq = texto.substring(0, nIzq);
+                const der = texto.substring(len - nDer);
+
+                ejercicios.push({
+                    texto: texto,
+                    nIzq: nIzq,
+                    nDer: nDer,
+                    resultadoIzq: izq,
+                    resultadoDer: der,
+                    formulaIzq: `=IZQUIERDA("${texto}"; ${nIzq})`,
+                    formulaDer: `=DERECHA("${texto}"; ${nDer})`
+                });
+            }
+            return ejercicios;
+        }
+
+        let currentExercises = generateRandomLeftRightExercises();
+
+        function renderExercises(lang) {
+            const container = document.getElementById('ejercicios-container');
+            container.innerHTML = '';
+            const t = translations[lang];
+
+            currentExercises.forEach((ej, i) => {
+                const num = i + 1;
+                const card = document.createElement('div');
+                card.className = `ejercicio-card ${num % 2 === 0 ? 'ejercicio-par' : ''}`;
+                card.innerHTML = `
+                    <h3>${t['ejercicio-titulo']} ${num}</h3>
+                    <p><strong>${t['datos']}</strong> ${ej.texto}</p>
+                    <p><strong>${t['formula-izq']}</strong> <span class="formula">${ej.formulaIzq}</span></p>
+                    <p><strong>${t['resultado-izq']}</strong> <span class="resultado">${ej.resultadoIzq}</span></p>
+                    <p><strong>${t['formula-der']}</strong> <span class="formula">${ej.formulaDer}</span></p>
+                    <p><strong>${t['resultado-der']}</strong> <span class="resultado">${ej.resultadoDer}</span></p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('[data-lang-key]');
+            const t = translations[lang];
+            document.body.className = document.body.className.replace(/\btheme-\w+\b/g, '').trim();
+            document.body.classList.add(`theme-${lang}`);
+
+            elements.forEach(el => {
+                const key = el.dataset.langKey;
+                if (t[key]) {
+                    if (key.includes('descripcion') || key.includes('sintaxis-li')) {
+                        el.innerHTML = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            renderExercises(lang);
+            localStorage.setItem('userLang', lang);
+        }
+
+        function downloadExercises(lang) {
+            const t = translations[lang];
+            let content = `${t['ejercicios-practica']}\n\n`;
+            currentExercises.forEach((ej, i) => {
+                content += `${t['ejercicio-titulo']} ${i + 1}\n`;
+                content += `${t['datos']} ${ej.texto}\n`;
+                content += `${t['formula-izq']} ${ej.formulaIzq} → ${t['resultado-izq']} ${ej.resultadoIzq}\n`;
+                content += `${t['formula-der']} ${ej.formulaDer} → ${t['resultado-der']} ${ej.resultadoDer}\n\n`;
+            });
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ejercicios_izquierda_derecha_${lang}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('userLang') || 'es';
+            setLanguage(savedLang);
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+            });
+
+            document.getElementById('btn-nuevos-ejercicios').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                currentExercises = generateRandomLeftRightExercises();
+                renderExercises(currentLang);
+            });
+
+            document.getElementById('btn-descargar').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                downloadExercises(currentLang);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+    <!-- Esta es la Cabecera -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Luis M. Salinas">
+    <title>Funciones de Excel - Aula Virtual</title>
+    <style>
+        :root {
+            --espaciado-ppal: 15px;
+            --borde-radio: 8px;
+            --sombra-nav: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --sombra-card: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .theme-es { --color-ppal: #1e88e5; --color-secundario: #1565c0; --color-fondo: #f4f6f9; --color-texto: #263238; }
+        .theme-en { --color-ppal: #43a047; --color-secundario: #2e7d32; --color-fondo: #f1f8e9; --color-texto: #1b5e20; }
+        .theme-ca { --color-ppal: #ffc107; --color-secundario: #ff9800; --color-fondo: #fff8e1; --color-texto: #d32f2f; }
+        .theme-fr { --color-ppal: #e53935; --color-secundario: #c62828; --color-fondo: #ffebee; --color-texto: #1a237e; }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        header {
+            background-color: var(--color-ppal);
+            box-shadow: var(--sombra-nav);
+            padding: 0 var(--espaciado-ppal);
+            margin-bottom: 30px;
+        }
+        .header-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .img-office {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            margin-bottom: 12px;
+        }
+        .header-top h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 6px;
+            margin-top: 15px;
+        }
+        .language-selector button {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .language-selector button.active {
+            background: white;
+            color: var(--color-ppal);
+            font-weight: bold;
+        }
+
+        /* Contenedor que agrupa la imagen y la descripción */
+        .intro-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* Contenedor hijo1 que alberga una imagen */
+        .rect-uno {
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            text-align: center;
+        }
+
+        /* Contenedor hijo2 que alberga un texto */
+        .rect-dos {
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            width: fit-content;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .rect-dos p {
+            margin: 0;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .rect-uno { flex: 0 0 40%; }
+        .rect-dos { flex: 0 0 60%; }
+
+        .funciones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .funcion-card {
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            text-align: center;
+            border-left: 5px solid var(--color-ppal);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .funcion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .funcion-card h3 {
+            color: var(--color-ppal);
+            margin-top: 0;
+            font-size: 1.2rem;
+        }
+        .funcion-card p {
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .app-footer {
+            background-color: #37474f;
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .contenido-pie {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--espaciado-ppal);
+        }
+        .footer-links a {
+            color: #b0bec5;
+            margin: 0 8px;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+        .footer-links a:hover { color: white; }
+
+        @media (max-width: 600px) {
+            .funciones-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<!-- Cuerpo de la página web-->
+<body class="theme-es">
+    <header>
+        <div class="header-top"> <!-- Esta es el Encabezado class="header-top"-->
+            <img src="./Aula virtual de clase.png" alt="Luis Salinas" class="img-office">
+            <h1 data-lang-key="titulo-pagina">Funciones de Excel - Aula Virtual</h1>
+            <div class="language-selector"> <!-- Este es el Selector de Idiomas -->
+                <button data-lang="es">ES</button> <!-- Selección Idioma Español y está por defecto-->
+                <button data-lang="en">EN</button> <!-- Selección Idioma Ingles -->
+                <button data-lang="ca">CA</button> <!-- Selección Idioma Catalán -->
+                <button data-lang="fr">FR</button> <!-- Selección Idioma Frances -->
+            </div>
+        </div>
+    </header>
+
+    <main class="contenido-ppal">
+        <div class="intro-container">
+            <div class="rect-uno">
+                <img src="./Profe Salinas.png" alt="Funciones de Fecha" style="width:100%; border-radius:8px;">
+            </div>
+            <div class="rect-dos">
+                <p data-lang-key="descripcion-fecha"><strong>Bienvenidos al Aula Virtual de Funciones de Excel </strong><br>
+
+¡Hola! Soy el Profesor Luis Salinas y te doy la bienvenida a este espacio diseñado para ayudarte a dominar las funciones más útiles y poderosas de Microsoft Excel.
+Aquí aprenderás de manera práctica, sencilla y paso a paso cómo aplicar fórmulas que te permitirán automatizar tareas, analizar datos y mejorar tu productividad en cualquier entorno de trabajo.
+
+A lo largo de este aula virtual exploraremos funciones esenciales como <strong>SI</strong>. <strong>LARGO</strong>,  <strong>BUSCARV</strong>, <strong>SUMAR.SI</strong>, <strong>CONTAR.SI</strong>, funciones de texto, fechas, lógica y muchas más. Cada contenido está explicado con ejemplos reales, <strong></strong>ejercicios interactivos y recursos visuales para que puedas poner en práctica lo aprendido inmediatamente.
+
+Mi objetivo es que desarrolles una comprensión sólida y confiada del uso de Excel, sin importar tu nivel actual. Este espacio está creado para acompañarte en tu proceso de aprendizaje y ayudarte a avanzar de forma progresiva.
+
+Prepárate para descubrir cómo Excel puede convertirse en una herramienta clave en tu día a día.
+¡Comencemos este camino hacia el dominio de las funciones!</p>
+            </div>
+        </div>
+        <section>
+            <div class="funciones-grid" id="funciones-container">
+            </div>
+        </section>
+    </main>
+    <!-- Pie de página personalizado -->
+    <footer class="app-footer">
+        <div class="contenido-pie">
+            <p data-lang-key="copyright">&copy; Noviembre 2025 - Luis M. Salinas</p>
+            <div class="footer-links">
+                <a href="#" data-lang-key="politica-privacidad">🔋 Política de Privacidad</a>
+                <a href="#" data-lang-key="terminos-uso">⏳ Términos de Uso</a>
+                <a href="#" data-lang-key="contacto-footer">🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO</a>
+                <a href="#" data-lang-key="telefono">☎️ Teléfono: +34 673 484 940</a>
+                <a href="#" data-lang-key="soporte-tecnico">⚒️ Soporte Técnico: Diseño Web | Agentes en Make</a>
+                <a href="#" data-lang-key="email">📧 Email: lsalinasuban@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /* Script para la traducción Eapañol - Ingles - Catalán - Frances */
+        const translations = {
+            es: {
+                'titulo-pagina': 'Funciones de Excel - Aula Virtual',
+                'descripcion-fecha': '<strong>Bienvenidos al Aula Virtual de Funciones de Excel </strong><br>¡Hola! Soy el Profesor Luis Salinas y te doy la bienvenida a este espacio diseñado para ayudarte a dominar las funciones más útiles y poderosas de Microsoft Excel.<br>Aquí aprenderás de manera práctica, sencilla y paso a paso cómo aplicar fórmulas que te permitirán automatizar tareas, analizar datos y mejorar tu productividad en cualquier entorno de trabajo.<br>A lo largo de este aula virtual exploraremos funciones esenciales como <strong>SI</strong>, <strong>LARGO</strong>, <strong>BUSCARV</strong>, <strong>SUMAR.SI</strong>, <strong>CONTAR.SI</strong>, funciones de texto, fechas, lógica y muchas más. Cada contenido está explicado con ejemplos reales, ejercicios interactivos y recursos visuales para que puedas poner en práctica lo aprendido inmediatamente.<br>Mi objetivo es que desarrolles una comprensión sólida y confiada del uso de Excel, sin importar tu nivel actual. Este espacio está creado para acompañarte en tu proceso de aprendizaje y ayudarte a avanzar de forma progresiva.<br>Prepárate para descubrir cómo Excel puede convertirse en una herramienta clave en tu día a día.<br>¡Comencemos este camino hacia el dominio de las funciones!',
+                'funcion-suma': 'Función SUMA',
+                'desc-suma': 'Suma valores numéricos.',
+                'funcion-promedio': 'Función PROMEDIO',
+                'desc-promedio': 'Calcula la media aritmética.',
+                'funcion-buscarv': 'Función BUSCARV',
+                'desc-buscarv': 'Busca un valor en una tabla.',
+                'funcion-si': 'Función SI',
+                'desc-si': 'Toma decisiones lógicas.',
+                'funcion-min-max': 'Funciones MIN y MAX',
+                'desc-min-max': 'Encuentra valores extremos.',
+                'funcion-contar-contara': 'Funciones CONTAR y CONTARA',
+                'desc-contar-contara': 'Cuenta celdas numéricas o no vacías.',
+                'funcion-concatenar': 'Función CONCATENAR',
+                'desc-concatenar': 'Une textos en una cadena.',
+                'funcion-izquierda-derecha': 'Funciones IZQUIERDA y DERECHA',
+                'desc-izquierda-derecha': 'Extrae caracteres de texto.',
+                'funcion-texto': 'Función TEXTO',
+                'desc-texto': 'Formatea números/fechas como texto.',
+                'funcion-fecha': 'Funciones de Fecha',
+                'desc-fecha': 'Inserta fecha y hora dinámicas.',
+                'funcion-si-conjunto': 'Función SI.CONJUNTO',
+                'desc-si-conjunto': 'Evalúa múltiples condiciones.',
+                'copyright': '© Noviembre 2025 - Luis M. Salinas'
+            },
+            en: {
+                'titulo-pagina': 'Excel Functions - Virtual Classroom',
+                'descripcion-fecha': '<strong>Welcome to the Excel Functions Virtual Classroom</strong><br>Hello! I’m Professor Luis Salinas, and I welcome you to this space designed to help you master the most useful and powerful functions in Microsoft Excel.<br>You’ll learn in a practical, simple, and step-by-step way how to apply formulas that will help you automate tasks, analyze data, and boost your productivity in any work environment.<br>Throughout this virtual classroom, we’ll explore essential functions such as <strong>IF</strong>, <strong>LEN</strong>, <strong>VLOOKUP</strong>, <strong>SUMIF</strong>, <strong>COUNTIF</strong>, text functions, date functions, logical functions, and many more. Each topic is explained with real-world examples, interactive exercises, and visual resources so you can immediately apply what you’ve learned.<br>My goal is for you to develop a solid and confident understanding of Excel, regardless of your current skill level. This space is created to support your learning journey and help you progress steadily.<br>Get ready to discover how Excel can become a key tool in your daily life.<br>Let’s begin this journey toward mastering functions!',
+                'funcion-suma': 'SUM Function',
+                'desc-suma': 'Adds numeric values.',
+                'funcion-promedio': 'AVERAGE Function',
+                'desc-promedio': 'Calculates the arithmetic mean.',
+                'funcion-buscarv': 'VLOOKUP Function',
+                'desc-buscarv': 'Searches for a value in a table.',
+                'funcion-si': 'IF Function',
+                'desc-si': 'Makes logical decisions.',
+                'funcion-min-max': 'MIN and MAX Functions',
+                'desc-min-max': 'Finds extreme values.',
+                'funcion-contar-contara': 'COUNT and COUNTA Functions',
+                'desc-contar-contara': 'Counts numeric or non-empty cells.',
+                'funcion-concatenar': 'CONCATENATE Function',
+                'desc-concatenar': 'Joins texts into one string.',
+                'funcion-izquierda-derecha': 'LEFT and RIGHT Functions',
+                'desc-izquierda-derecha': 'Extracts characters from text.',
+                'funcion-texto': 'TEXT Function',
+                'desc-texto': 'Formats numbers/dates as text.',
+                'funcion-fecha': 'Date Functions',
+                'desc-fecha': 'Inserts dynamic date and time.',
+                'funcion-si-conjunto': 'IFS Function',
+                'desc-si-conjunto': 'Evaluates multiple conditions.',
+                'copyright': '© November 2025 - Luis M. Salinas'
+            },
+            ca: {
+                'titulo-pagina': 'Funcions d’Excel - Aula Virtual',
+                'descripcion-fecha': '<strong>Benvinguts a l’Aula Virtual de Funcions d’Excel</strong><br>Hola! Soc el professor Luis Salinas i us dono la benvinguda a aquest espai dissenyat per ajudar-vos a dominar les funcions més útils i potents de Microsoft Excel.<br>Aprendreu de manera pràctica, senzilla i pas a pas com aplicar fórmules que us permetran automatitzar tasques, analitzar dades i millorar la vostra productivitat en qualsevol entorn de treball.<br>Al llarg d’aquest aula virtual explorarem funcions essencials com <strong>SI</strong>, <strong>LARGADA</strong>, <strong>BUSCARV</strong>, <strong>SUMAR.SI</strong>, <strong>COMPTAR.SI</strong>, funcions de text, de data, lògiques i moltes més. Cada contingut s’explica amb exemples reals, exercicis interactius i recursos visuals perquè pugueu posar en pràctica allò que heu après immediatament.<br>El meu objectiu és que desenvolupeu una comprensió sòlida i confiada de l’ús d’Excel, sense importar el vostre nivell actual. Aquest espai està creat per acompanyar-vos en el procés d’aprenentatge i ajudar-vos a avançar de forma progressiva.<br>Prepareu-vos per descobrir com Excel pot convertir-se en una eina clau en el vostre dia a dia.<br>Comencem aquest camí cap al domini de les funcions!',
+        // ... resto de claves
+                'funcion-suma': 'Funció SUMA',
+                'desc-suma': 'Suma valors numèrics.',
+                'funcion-promedio': 'Funció PROMIG',
+                'desc-promedio': 'Calcula la mitjana aritmètica.',
+                'funcion-buscarv': 'Funció BUSCARV',
+                'desc-buscarv': 'Cerca un valor en una taula.',
+                'funcion-si': 'Funció SI',
+                'desc-si': 'Pren decisions lògiques.',
+                'funcion-min-max': 'Funcions MIN i MAX',
+                'desc-min-max': 'Troba valors extrems.',
+                'funcion-contar-contara': 'Funcions COMPTAR i COMPTARA',
+                'desc-contar-contara': 'Compta cel·les numèriques o no buides.',
+                'funcion-concatenar': 'Funció CONCATENAR',
+                'desc-concatenar': 'Uneix textos en una cadena.',
+                'funcion-izquierda-derecha': 'Funcions ESQUERRA i DRETA',
+                'desc-izquierda-derecha': 'Extreu caràcters de text.',
+                'funcion-texto': 'Funció TEXT',
+                'desc-texto': 'Formata números/dates com a text.',
+                'funcion-fecha': 'Funcions de Data',
+                'desc-fecha': 'Insereix data i hora dinàmiques.',
+                'funcion-si-conjunto': 'Funció SI.CONJUNT',
+                'desc-si-conjunto': 'Avalua múltiples condicions.',
+                'copyright': '© Novembre 2025 - Luis M. Salinas'
+            },
+            fr: {
+                'titulo-pagina': 'Fonctions Excel - Classe Virtuelle',
+                'descripcion-fecha': '<strong>Bienvenue dans la Classe Virtuelle des Fonctions Excel</strong><br>Bonjour ! Je suis le professeur Luis Salinas, et je vous souhaite la bienvenue dans cet espace conçu pour vous aider à maîtriser les fonctions les plus utiles et puissantes de Microsoft Excel.<br>Vous apprendrez de manière pratique, simple et étape par étape comment appliquer des formules vous permettant d’automatiser des tâches, d’analyser des données et d’améliorer votre productivité dans tout environnement professionnel.<br>Au fil de cette classe virtuelle, nous explorerons des fonctions essentielles telles que <strong>SI</strong>, <strong>NBCAR</strong>, <strong>RECHERCHEV</strong>, <strong>SOMME.SI</strong>, <strong>NB.SI</strong>, ainsi que des fonctions texte, date, logiques, et bien d’autres. Chaque contenu est expliqué avec des exemples concrets, des exercices interactifs et des ressources visuelles afin que vous puissiez mettre en pratique immédiatement vos nouvelles connaissances.<br>Mon objectif est que vous développiez une compréhension solide et confiante d’Excel, quel que soit votre niveau actuel. Cet espace a été créé pour vous accompagner dans votre apprentissage et vous aider à progresser de manière continue.<br>Préparez-vous à découvrir comment Excel peut devenir un outil clé au quotidien.<br>Commençons ce chemin vers la maîtrise des fonctions !',
+                'funcion-suma': 'Fonction SOMME',
+                'desc-suma': 'Additionne des valeurs numériques.',
+                'funcion-promedio': 'Fonction MOYENNE',
+                'desc-promedio': 'Calcule la moyenne arithmétique.',
+                'funcion-buscarv': 'Fonction RECHERCHEV',
+                'desc-buscarv': 'Recherche une valeur dans un tableau.',
+                'funcion-si': 'Fonction SI',
+                'desc-si': 'Prend des décisions logiques.',
+                'funcion-min-max': 'Fonctions MIN et MAX',
+                'desc-min-max': 'Trouve les valeurs extrêmes.',
+                'funcion-contar-contara': 'Fonctions NB et NBVAL',
+                'desc-contar-contara': 'Compte les cellules numériques ou non vides.',
+                'funcion-concatenar': 'Fonction CONCATENER',
+                'desc-concatenar': 'Joint des textes en une chaîne.',
+                'funcion-izquierda-derecha': 'Fonctions GAUCHE et DROITE',
+                'desc-izquierda-derecha': 'Extrait des caractères de texte.',
+                'funcion-texto': 'Fonction TEXTE',
+                'desc-texto': 'Met en forme nombres/dates en texte.',
+                'funcion-fecha': 'Fonctions de Date',
+                'desc-fecha': 'Insère date et heure dynamiques.',
+                'funcion-si-conjunto': 'Fonction SI.MULTIPLE',
+                'desc-si-conjunto': 'Évalue plusieurs conditions.',
+                'copyright': '© Novembre 2025 - Luis M. Salinas'
+            }
+        };
+        /* 11 Funciones explicadas con ejercicios */
+        const funciones = [
+            { key: 'suma', file: 'funcion-suma.html' },
+            { key: 'promedio', file: 'funcion-promedio.html' },
+            { key: 'buscarv', file: 'funcion-buscarv.html' },
+            { key: 'si', file: 'funcion-si.html' },
+            { key: 'min-max', file: 'funcion-min-max.html' },
+            { key: 'contar-contara', file: 'funcion-contar-contara.html' },
+            { key: 'concatenar', file: 'funcion-concatenar.html' },
+            { key: 'izquierda-derecha', file: 'funcion-izquierda-derecha.html' },
+            { key: 'texto', file: 'funcion-texto.html' },
+            { key: 'fecha', file: 'funcion-fecha.html' },
+            { key: 'si-conjunto', file: 'funcion-si-conjunto.html' }
+        ];
+
+        function renderMenu(lang) {
+            const container = document.getElementById('funciones-container');
+            container.innerHTML = '';
+            const t = translations[lang];
+
+            funciones.forEach(func => {
+                const card = document.createElement('a');
+                card.href = func.file;
+                card.className = 'funcion-card';
+                card.innerHTML = `
+                    <h3>${t[`funcion-${func.key}`]}</h3>
+                    <p>${t[`desc-${func.key}`]}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('[data-lang-key]');
+            const t = translations[lang];
+            document.body.className = document.body.className.replace(/\btheme-\w+\b/g, '').trim();
+            document.body.classList.add(`theme-${lang}`);
+
+            elements.forEach(el => {
+    const key = el.dataset.langKey;
+    if (t[key]) {
+        if (key === 'descripcion-fecha') {
+            el.innerHTML = t[key];
+        } else {
+            el.textContent = t[key];
+        }
+    }
+});
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            renderMenu(lang);
+            localStorage.setItem('userLang', lang);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('userLang') || 'es';
+            setLanguage(savedLang);
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+            });
+        });
+    </script>
+</body>
+</html>

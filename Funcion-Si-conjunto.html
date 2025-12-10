@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Luis M. Salinas">
+    <title>Función SI.CONJUNTO - Excel</title>
+    <style>
+        /* --- VARIABLES BASE --- */
+        :root {
+            --espaciado-ppal: 15px;
+            --borde-radio: 8px;
+            --sombra-nav: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --sombra-card: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* === TEMAS POR IDIOMA === */
+        .theme-es { --color-ppal: #0288d1; --color-secundario: #01579b; --color-fondo: #e1f5fe; --color-texto: #263238; }
+        .theme-en { --color-ppal: #6a1b9a; --color-secundario: #4a148c; --color-fondo: #f3e5f5; --color-texto: #1b5e20; }
+        .theme-ca { --color-ppal: #d32f2f; --color-secundario: #b71c1c; --color-fondo: #ffebee; --color-texto: #d32f2f; }
+        .theme-fr { --color-ppal: #388e3c; --color-secundario: #1b5e20; --color-fondo: #e8f5e9; --color-texto: #1a237e; }
+
+        /* Botón Volver */
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background-color: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            align-self: center;
+            margin-right: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-back svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .action-button {
+            background-color: var(--color-ppal);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            margin: 0 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: var(--color-secundario);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back span {
+                display: none;
+            }
+            .btn-back {
+                padding: 10px;
+            }
+        }
+
+        /* --- ESTILOS BASE --- */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        header {
+            background-color: var(--color-ppal);
+            box-shadow: var(--sombra-nav);
+            padding: 0 var(--espaciado-ppal);
+            margin-bottom: 30px;
+        }
+        .header-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .img-office {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            margin-bottom: 12px;
+        }
+        .header-top h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .contenido-ppal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--espaciado-ppal) 30px;
+        }
+
+        .rect-uno {
+            width: 100%;
+            max-width: 480px; /* Aprox. 40% of 1200px, pero flexible */
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            text-align: center;
+        }
+
+        .rect-dos {
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            /* Ajuste automático al contenido */
+            width: fit-content;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .rect-dos p {
+            margin: 0;
+            text-align: center; 
+        }
+        
+        .sect-ppal1, .sect-ppal2 {
+            max-width: 1200px;
+            margin: 10px auto 40px;
+            padding: 0 var(--espaciado-ppal);
+        }
+        .sect-ppal1 > h1, .sect-ppal2 > h1 {
+            text-align: center;
+            color: var(--color-ppal);
+            margin: 30px 0 20px;
+        }
+        .doble-columna {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .section1, .section1a {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+        }
+        .section1 {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+        .section1a {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicios-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .ejercicio-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            position: relative;
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicio-par { border-left: 2px solid var(--color-ppal); }
+        .ejercicio-par::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -15px;
+            width: 2px;
+            background-color: var(--color-ppal);
+        }
+        .ejercicio-card h3 {
+            color: var(--color-ppal);
+            margin-top: 0;
+        }
+        .formula {
+            background-color: #f0f4ff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        .resultado {
+            font-weight: bold;
+            color: var(--color-secundario);
+        }
+
+        .app-footer {
+            background-color: #37474f;
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .contenido-pie { max-width: 1200px; margin: 0 auto; padding: 0 var(--espaciado-ppal); }
+        .footer-links a {
+            color: #b0bec5;
+            margin: 0 8px;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+        .footer-links a:hover { color: white; }
+
+        .language-selector {
+            display: flex;
+            gap: 6px;
+            margin-top: 15px;
+        }
+        .language-selector button {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .language-selector button.active {
+            background: white;
+            color: var(--color-ppal);
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .contenido-ppal, .doble-columna, .ejercicios-grid {
+                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+            .ejercicio-par::before { display: none; }
+            .rect-uno, .rect-dos { flex: 1; }
+        }
+    </style>
+</head>
+<body class="theme-es">
+    <header>
+        <div class="header-top">
+            <a href="index.html" class="btn-back" aria-label="Volver a la página principal">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                <span data-lang-key="btn-volver">Volver</span>
+            </a>
+            <img src="./Aula virtual de clase.png" alt="Luis Salinas" class="img-office">
+            <h1 data-lang-key="titulo-pagina">Función SI.CONJUNTO en Excel</h1>
+            <div class="language-selector">
+                <button data-lang="es">ES</button>
+                <button data-lang="en">EN</button>
+                <button data-lang="ca">CA</button>
+                <button data-lang="fr">FR</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+         <!--🔧 Código actualizado (solo la sección modificada):
+         1. Modificación en el bloque <main> centrado del párrafo -->
+            <div class="contenido-ppal">
+                <div class="rect-uno">
+                    <img src="Profe Salinas5.png" alt="Función SI" style="width:100%; border-radius:8px;">
+                    <div style="text-align:center; color:#666;">Profesor Luis M.Salinas</div>
+                </div>
+            <div class="rect-dos">
+                <p data-lang-key="descripcion-siconjunto">La función <strong>SI.CONJUNTO</strong> evalúa múltiples condiciones y devuelve el valor correspondiente a la **primera condición verdadera**. Es una alternativa moderna y más legible que anidar múltiples funciones SI. <em>Disponible en Excel 2019 y Microsoft 365.</em></p>
+            </div>
+        </div>
+
+        <section class="sect-ppal1">
+            <h1 data-lang-key="sintaxis-y-desarrollo">Sintaxis y Desarrollo</h1>
+            <div class="doble-columna">
+                <section class="section1">
+                    <h2 data-lang-key="sintaxis">Sintaxis</h2>
+                    <p data-lang-key="sintaxis-texto">La sintaxis de la función SI.CONJUNTO es:</p>
+                    <div class="formula">=SI.CONJUNTO(condición1; valor1; [condición2; valor2]; ...)</div>
+                    <ul>
+                        <li data-lang-key="sintaxis-li1"><strong>condición1</strong>: primera expresión lógica a evaluar (obligatoria).</li>
+                        <li data-lang-key="sintaxis-li2"><strong>valor1</strong>: resultado si la condición1 es VERDADERA.</li>
+                        <li data-lang-key="sintaxis-li3"><strong>No requiere valor "sino"</strong>. Si ninguna condición se cumple, devuelve <span class="formula">#N/A</span>.</li>
+                    </ul>
+                </section>
+                <section class="section1a">
+                    <h2 data-lang-key="desarrollo">Desarrollo</h2>
+                    <p data-lang-key="desarrollo-texto">Ejemplo: <span class="formula">=SI.CONJUNTO(A1>=90; "Excelente"; A1>=70; "Aprobado"; A1>=50; "Regular"; A1<50; "Reprobado")</span>.  
+                    Solo se evalúa hasta la primera condición verdadera.  
+                    ⚠️ <strong>No compatible</strong> con Excel 2016 o versiones anteriores.</p>
+                </section>
+            </div>
+        </section>
+
+        <div class="action-buttons">
+            <button class="action-button" id="btn-nuevos-ejercicios" data-lang-key="btn-nuevos-ejercicios">Generar nuevos ejercicios</button>
+            <button class="action-button" id="btn-descargar" data-lang-key="btn-descargar">Descargar ejercicios (.txt)</button>
+        </div>
+
+        <section class="sect-ppal2">
+            <h1 data-lang-key="ejercicios-practica">Ejercicios de Práctica</h1>
+            <div class="ejercicios-grid" id="ejercicios-container">
+                <!-- Generados con JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="contenido-pie">
+            <p data-lang-key="copyright">&copy; Noviembre 2025 - Luis M. Salinas</p>
+            <div class="footer-links">
+                <a href="#" data-lang-key="politica-privacidad">🔋 Política de Privacidad</a>
+                <a href="#" data-lang-key="terminos-uso">⏳ Términos de Uso</a>
+                <a href="#" data-lang-key="contacto-footer">🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO</a>
+                <a href="#" data-lang-key="telefono">☎️ Teléfono: +34 673 484 940</a>
+                <a href="#" data-lang-key="soporte-tecnico">⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make</a>
+                <a href="#" data-lang-key="email">📧 Email: lsalinasuban@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            'es': {
+                'titulo-pagina': 'Función SI.CONJUNTO en Excel',
+                'btn-volver': 'Volver',
+                'descripcion-siconjunto': 'La función <strong>SI.CONJUNTO</strong> evalúa múltiples condiciones y devuelve el valor correspondiente a la <strong>primera condición verdadera</strong>. Es una alternativa moderna y más legible que anidar múltiples funciones SI. <em>Disponible en Excel 2019 y Microsoft 365.</em>',
+                'sintaxis-y-desarrollo': 'Sintaxis y Desarrollo',
+                'sintaxis': 'Sintaxis',
+                'sintaxis-texto': 'La sintaxis de la función SI.CONJUNTO es:',
+                'sintaxis-li1': '<strong>condición1</strong>: primera expresión lógica a evaluar (obligatoria).',
+                'sintaxis-li2': '<strong>valor1</strong>: resultado si la condición1 es VERDADERA.',
+                'sintaxis-li3': '<strong>No requiere valor "sino"</strong>. Si ninguna condición se cumple, devuelve <span class="formula">#N/A</span>.',
+                'desarrollo': 'Desarrollo',
+                'desarrollo-texto': 'Ejemplo: <span class="formula">=SI.CONJUNTO(A1>=90; "Excelente"; A1>=70; "Aprobado"; A1>=50; "Regular"; A1<50; "Reprobado")</span>.<br>Solo se evalúa hasta la primera condición verdadera.<br>⚠️ <strong>No compatible</strong> con Excel 2016 o versiones anteriores.',
+                'ejercicios-practica': 'Ejercicios de Práctica',
+                'ejercicio-titulo': 'Ejercicio',
+                'datos': 'Valor de entrada (ej. en A1):',
+                'formula': 'Fórmula:',
+                'resultado': 'Resultado:',
+                'btn-nuevos-ejercicios': 'Generar nuevos ejercicios',
+                'btn-descargar': 'Descargar ejercicios (.txt)',
+                'copyright': '© Noviembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privacidad',
+                'terminos-uso': '⏳ Términos de Uso',
+                'contacto-footer': '🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO',
+                'telefono': '☎️ Teléfono: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'en': {
+                'titulo-pagina': 'IFS Function in Excel',
+                'btn-volver': 'Back',
+                'descripcion-siconjunto': 'The <strong>IFS</strong> function evaluates multiple conditions and returns the value for the <strong>first TRUE condition</strong>. It’s a modern, cleaner alternative to nested IF statements. <em>Available in Excel 2019 and Microsoft 365.</em>',
+                'sintaxis-y-desarrollo': 'Syntax and Explanation',
+                'sintaxis': 'Syntax',
+                'sintaxis-texto': 'The IFS function syntax is:',
+                'sintaxis-li1': '<strong>logical_test1</strong>: first condition to evaluate (required).',
+                'sintaxis-li2': '<strong>value_if_true1</strong>: result if condition1 is TRUE.',
+                'sintaxis-li3': '<strong>No "else" value</strong> by default. Returns <span class="formula">#N/A</span> if no condition is met.',
+                'desarrollo': 'Explanation',
+                'desarrollo-texto': 'Example: <span class="formula">=IFS(A1>=90, "Excellent", A1>=70, "Pass", A1>=50, "Fair", A1<50, "Fail")</span>.<br>Stops at the first TRUE condition.<br>⚠️ <strong>Not compatible</strong> with Excel 2016 or earlier.',
+                'ejercicios-practica': 'Practice Exercises',
+                'ejercicio-titulo': 'Exercise',
+                'datos': 'Input value (e.g., in A1):',
+                'formula': 'Formula:',
+                'resultado': 'Result:',
+                'btn-nuevos-ejercicios': 'Generate new exercises',
+                'btn-descargar': 'Download exercises (.txt)',
+                'copyright': '© November 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Privacy Policy',
+                'terminos-uso': '⏳ Terms of Use',
+                'contacto-footer': '🛂 Contact: Luis M. Salinas - Electronics Technologist - UDO',
+                'telefono': '☎️ Phone: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Technical Support: Web Design & Development | AI Agents & Make Workflows',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'ca': {
+                'titulo-pagina': 'Funció SI.CONJUNT a Excel',
+                'btn-volver': 'Tornar',
+                'descripcion-siconjunto': 'La funció <strong>SI.CONJUNT</strong> avalua múltiples condicions i retorna el valor de la <strong>primera condició certa</strong>. És una alternativa moderna i més llegible que imbricar funcions SI. <em>Disponible a Excel 2019 i Microsoft 365.</em>',
+                'sintaxis-y-desarrollo': 'Sintaxi i Desenvolupament',
+                'sintaxis': 'Sintaxi',
+                'sintaxis-texto': 'La sintaxi de la funció SI.CONJUNT és:',
+                'sintaxis-li1': '<strong>condició1</strong>: primera expressió lògica a avaluar (obligatòria).',
+                'sintaxis-li2': '<strong>valor1</strong>: resultat si la condició1 és CERT.',
+                'sintaxis-li3': '<strong>No requereix valor "sinó"</strong>. Si cap condició es compleix, retorna <span class="formula">#N/A</span>.',
+                'desarrollo': 'Desenvolupament',
+                'desarrollo-texto': 'Exemple: <span class="formula">=SI.CONJUNT(A1>=90; "Excel·lent"; A1>=70; "Aprovat"; A1>=50; "Regular"; A1<50; "Reprovat")</span>.<br>Només s’avalua fins a la primera condició certa.<br>⚠️ <strong>No compatible</strong> amb Excel 2016 o versions anteriors.',
+                'ejercicios-practica': 'Exercicis pràctics',
+                'ejercicio-titulo': 'Exercici',
+                'datos': 'Valor d’entrada (p. ex. a A1):',
+                'formula': 'Fórmula:',
+                'resultado': 'Resultat:',
+                'btn-nuevos-ejercicios': 'Generar nous exercicis',
+                'btn-descargar': 'Descarregar exercicis (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privadesa',
+                'terminos-uso': '⏳ Termes d’Ús',
+                'contacto-footer': '🛂 Contacte: Luis M. Salinas - Tecnòleg Electrònic - UDO',
+                'telefono': '☎️ Telèfon: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Suport Tècnic: Disseny i Confecció de Pàgines Web | Desenvolupament d’Agents i Fluxos a Make',
+                'email': '📧 Correu: lsalinasuban@gmail.com'
+            },
+            'fr': {
+                'titulo-pagina': 'Fonction SI.MULTIPLE dans Excel',
+                'btn-volver': 'Retour',
+                'descripcion-siconjunto': 'La fonction <strong>SI.MULTIPLE</strong> évalue plusieurs conditions et renvoie la valeur correspondant à la <strong>première condition VRAIE</strong>. C’est une alternative moderne et plus lisible aux fonctions SI imbriquées. <em>Disponible dans Excel 2019 et Microsoft 365.</em>',
+                'sintaxis-y-desarrollo': 'Syntaxe et Explication',
+                'sintaxis': 'Syntaxe',
+                'sintaxis-texto': 'La syntaxe de la fonction SI.MULTIPLE est :',
+                'sintaxis-li1': '<strong>test_logique1</strong> : première condition à évaluer (obligatoire).',
+                'sintaxis-li2': '<strong>valeur_si_vrai1</strong> : résultat si la condition1 est VRAI.',
+                'sintaxis-li3': '<strong>Pas de valeur "sinon"</strong> par défaut. Renvoie <span class="formula">#N/A</span> si aucune condition n’est remplie.',
+                'desarrollo': 'Explication',
+                'desarrollo-texto': 'Exemple : <span class="formula">=SI.MULTIPLE(A1>=90; "Excellent"; A1>=70; "Réussi"; A1>=50; "Moyen"; A1<50; "Échec")</span>.<br>S’arrête à la première condition VRAIE.<br>⚠️ <strong>Non compatible</strong> avec Excel 2016 ou versions antérieures.',
+                'ejercicios-practica': 'Exercices pratiques',
+                'ejercicio-titulo': 'Exercice',
+                'datos': 'Valeur d’entrée (ex. en A1) :',
+                'formula': 'Formule :',
+                'resultado': 'Résultat :',
+                'btn-nuevos-ejercicios': 'Générer de nouveaux exercices',
+                'btn-descargar': 'Télécharger les exercices (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Politique de Confidentialité',
+                'terminos-uso': '⏳ Conditions d’Utilisation',
+                'contacto-footer': '🛂 Contact : Luis M. Salinas - Technologue Électronique - UDO',
+                'telefono': '☎️ Téléphone : +34 673 484 940',
+                'soporte-tecnico': '⚒️ Support Technique : Conception de Sites Web | Développement d’Agents et Workflows sur Make',
+                'email': '📧 Email : lsalinasuban@gmail.com'
+            }
+        };
+
+        // Generador de ejercicios para SI.CONJUNTO
+        function generateRandomIfsExercises(count = 10) {
+            const ejercicios = [];
+            for (let i = 0; i < count; i++) {
+                const valor = Math.floor(Math.random() * 100) + 1; // 1 a 100
+                let resultado = "";
+                if (valor >= 90) resultado = "Excelente";
+                else if (valor >= 75) resultado = "Muy bien";
+                else if (valor >= 60) resultado = "Aprobado";
+                else if (valor >= 40) resultado = "En recuperación";
+                else resultado = "Reprobado";
+
+                const formula = `=SI.CONJUNTO(A1>=90; "Excelente"; A1>=75; "Muy bien"; A1>=60; "Aprobado"; A1>=40; "En recuperación"; A1<40; "Reprobado")`;
+
+                ejercicios.push({
+                    valor: valor,
+                    formula: formula,
+                    resultado: resultado
+                });
+            }
+            return ejercicios;
+        }
+
+        let currentExercises = generateRandomIfsExercises();
+
+        function renderExercises(lang) {
+            const container = document.getElementById('ejercicios-container');
+            container.innerHTML = '';
+            const t = translations[lang];
+
+            currentExercises.forEach((ej, i) => {
+                const num = i + 1;
+                const card = document.createElement('div');
+                card.className = `ejercicio-card ${num % 2 === 0 ? 'ejercicio-par' : ''}`;
+                card.innerHTML = `
+                    <h3>${t['ejercicio-titulo']} ${num}</h3>
+                    <p><strong>${t['datos']}</strong> ${ej.valor}</p>
+                    <p><strong>${t['formula']}</strong> <span class="formula">${ej.formula}</span></p>
+                    <p><strong>${t['resultado']}</strong> <span class="resultado">${ej.resultado}</span></p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('[data-lang-key]');
+            const t = translations[lang];
+            document.body.className = document.body.className.replace(/\btheme-\w+\b/g, '').trim();
+            document.body.classList.add(`theme-${lang}`);
+
+            elements.forEach(el => {
+                const key = el.dataset.langKey;
+                if (t[key]) {
+                    if (key.includes('descripcion') || key.includes('desarrollo-texto') || key.includes('sintaxis-li')) {
+                        el.innerHTML = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            renderExercises(lang);
+            localStorage.setItem('userLang', lang);
+        }
+
+        function downloadExercises(lang) {
+            const t = translations[lang];
+            let content = `${t['ejercicios-practica']}\n\n`;
+            currentExercises.forEach((ej, i) => {
+                content += `${t['ejercicio-titulo']} ${i + 1}\n`;
+                content += `${t['datos']} ${ej.valor}\n`;
+                content += `${t['formula']} ${ej.formula}\n`;
+                content += `${t['resultado']} ${ej.resultado}\n\n`;
+            });
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ejercicios_siconjunto_${lang}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('userLang') || 'es';
+            setLanguage(savedLang);
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+            });
+
+            document.getElementById('btn-nuevos-ejercicios').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                currentExercises = generateRandomIfsExercises();
+                renderExercises(currentLang);
+            });
+
+            document.getElementById('btn-descargar').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                downloadExercises(currentLang);
+            });
+        });
+    </script>
+</body>
+</html>

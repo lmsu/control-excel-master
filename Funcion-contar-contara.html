@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Luis M. Salinas">
+    <title>Funciones CONTAR y CONTARA - Excel</title>
+    <style>
+        /* --- VARIABLES BASE --- */
+        :root {
+            --espaciado-ppal: 15px;
+            --borde-radio: 8px;
+            --sombra-nav: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --sombra-card: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* === TEMAS POR IDIOMA === */
+        .theme-es { --color-ppal: #388e3c; --color-secundario: #1b5e20; --color-fondo: #e8f5e9; --color-texto: #263238; }
+        .theme-en { --color-ppal: #0288d1; --color-secundario: #01579b; --color-fondo: #e1f5fe; --color-texto: #1b5e20; }
+        .theme-ca { --color-ppal: #d32f2f; --color-secundario: #b71c1c; --color-fondo: #ffebee; --color-texto: #d32f2f; }
+        .theme-fr { --color-ppal: #6a1b9a; --color-secundario: #4a148c; --color-fondo: #f3e5f5; --color-texto: #1a237e; }
+
+        /* Botón Volver */
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background-color: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            align-self: center;
+            margin-right: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-back svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .action-button {
+            background-color: var(--color-ppal);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            margin: 0 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: var(--color-secundario);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back span {
+                display: none;
+            }
+            .btn-back {
+                padding: 10px;
+            }
+        }
+
+        /* --- ESTILOS BASE --- */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        header {
+            background-color: var(--color-ppal);
+            box-shadow: var(--sombra-nav);
+            padding: 0 var(--espaciado-ppal);
+            margin-bottom: 30px;
+        }
+        .header-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .img-office {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            margin-bottom: 12px;
+        }
+        .header-top h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .contenido-ppal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--espaciado-ppal) 30px;
+        }
+
+        .rect-uno {
+            width: 100%;
+            max-width: 480px; /* Aprox. 40% of 1200px, pero flexible */
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            text-align: center;
+        }
+
+        .rect-dos {
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            /* Ajuste automático al contenido */
+            width: fit-content;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .rect-dos p {
+            margin: 0;
+            text-align: center; 
+        }
+        
+        .sect-ppal1, .sect-ppal2 {
+            max-width: 1200px;
+            margin: 10px auto 40px;
+            padding: 0 var(--espaciado-ppal);
+        }
+        .sect-ppal1 > h1, .sect-ppal2 > h1 {
+            text-align: center;
+            color: var(--color-ppal);
+            margin: 30px 0 20px;
+        }
+        .doble-columna {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .section1, .section1a {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+        }
+        .section1 {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+        .section1a {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicios-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .ejercicio-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            position: relative;
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicio-par { border-left: 2px solid var(--color-ppal); }
+        .ejercicio-par::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -15px;
+            width: 2px;
+            background-color: var(--color-ppal);
+        }
+        .ejercicio-card h3 {
+            color: var(--color-ppal);
+            margin-top: 0;
+        }
+        .formula {
+            background-color: #f0f4ff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        .resultado {
+            font-weight: bold;
+            color: var(--color-secundario);
+        }
+
+        .app-footer {
+            background-color: #37474f;
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .contenido-pie { max-width: 1200px; margin: 0 auto; padding: 0 var(--espaciado-ppal); }
+        .footer-links a {
+            color: #b0bec5;
+            margin: 0 8px;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+        .footer-links a:hover { color: white; }
+
+        .language-selector {
+            display: flex;
+            gap: 6px;
+            margin-top: 15px;
+        }
+        .language-selector button {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .language-selector button.active {
+            background: white;
+            color: var(--color-ppal);
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .contenido-ppal, .doble-columna, .ejercicios-grid {
+                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+            .ejercicio-par::before { display: none; }
+            .rect-uno, .rect-dos { flex: 1; }
+        }
+    </style>
+</head>
+<body class="theme-es">
+    <header>
+        <div class="header-top">
+            <a href="index.html" class="btn-back" aria-label="Volver a la página principal">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                <span data-lang-key="btn-volver">Volver</span>
+            </a>
+            <img src="./Aula virtual de clase.png" alt="Luis Salinas" class="img-office">
+            <h1 data-lang-key="titulo-pagina">Funciones CONTAR y CONTARA en Excel</h1>
+            <div class="language-selector">
+                <button data-lang="es">ES</button>
+                <button data-lang="en">EN</button>
+                <button data-lang="ca">CA</button>
+                <button data-lang="fr">FR</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+         <!--🔧 Código actualizado (solo la sección modificada):
+         1. Modificación en el bloque <main> centrado del párrafo -->
+            <div class="contenido-ppal">
+                <div class="rect-uno">
+                    <img src="Profe Salinas23.png" alt="Función SI" style="width:100%; border-radius:8px;">
+                    <div style="text-align:center; color:#666;">Profesor Luis M.Salinas</div>
+                </div>
+            <div class="rect-dos">
+                <p data-lang-key="descripcion-contar">Las funciones <strong>CONTAR</strong> y <strong>CONTARA</strong> permiten contar celdas en un rango, pero con propósitos distintos:<br>  
+                • <strong>CONTAR</strong>: solo cuenta celdas con <strong>números</strong>.<br>  
+                • <strong>CONTARA</strong>: cuenta todas las celdas <strong>no vacías</strong> (números, texto, fechas, etc.).</p>
+            </div>
+        </div>
+
+        <section class="sect-ppal1">
+            <h1 data-lang-key="sintaxis-y-desarrollo">Sintaxis y Desarrollo</h1>
+            <div class="doble-columna">
+                <section class="section1">
+                    <h2 data-lang-key="sintaxis-contar">Sintaxis – CONTAR</h2>
+                    <p data-lang-key="sintaxis-texto-contar">Cuenta celdas que contienen <strong>números</strong>:</p>
+                    <div class="formula">=CONTAR(valor1; [valor2]; ...)</div>
+                    <ul>
+                        <li data-lang-key="sintaxis-li1-contar"><strong>valor1</strong>: primer rango o celda (obligatorio).</li>
+                        <li data-lang-key="sintaxis-li2-contar">Ignora texto, lógicos y celdas vacías.</li>
+                        <li data-lang-key="sintaxis-li3-contar">Los ceros <strong>sí se cuentan</strong>.</li>
+                    </ul>
+                </section>
+                <section class="section1a">
+                    <h2 data-lang-key="sintaxis-contara">Sintaxis – CONTARA</h2>
+                    <p data-lang-key="sintaxis-texto-contara">Cuenta celdas <strong>no vacías</strong>:</p>
+                    <div class="formula">=CONTARA(valor1; [valor2]; ...)</div>
+                    <ul>
+                        <li data-lang-key="sintaxis-li1-contara"><strong>valor1</strong>: primer rango o celda (obligatorio).</li>
+                        <li data-lang-key="sintaxis-li2-contara">Cuenta texto, números, errores, fechas, etc.</li>
+                        <li data-lang-key="sintaxis-li3-contara">Solo ignora celdas <strong>completamente vacías</strong>.</li>
+                    </ul>
+                </section>
+            </div>
+        </section>
+
+        <div class="action-buttons">
+            <button class="action-button" id="btn-nuevos-ejercicios" data-lang-key="btn-nuevos-ejercicios">Generar nuevos ejercicios</button>
+            <button class="action-button" id="btn-descargar" data-lang-key="btn-descargar">Descargar ejercicios (.txt)</button>
+        </div>
+
+        <section class="sect-ppal2">
+            <h1 data-lang-key="ejercicios-practica">Ejercicios de Práctica</h1>
+            <div class="ejercicios-grid" id="ejercicios-container">
+                <!-- Generados con JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="contenido-pie">
+            <p data-lang-key="copyright">&copy; Noviembre 2025 - Luis M. Salinas</p>
+            <div class="footer-links">
+                <a href="#" data-lang-key="politica-privacidad">🔋 Política de Privacidad</a>
+                <a href="#" data-lang-key="terminos-uso">⏳ Términos de Uso</a>
+                <a href="#" data-lang-key="contacto-footer">🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO</a>
+                <a href="#" data-lang-key="telefono">☎️ Teléfono: +34 673 484 940</a>
+                <a href="#" data-lang-key="soporte-tecnico">⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make</a>
+                <a href="#" data-lang-key="email">📧 Email: lsalinasuban@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            'es': {
+                'titulo-pagina': 'Funciones CONTAR y CONTARA en Excel',
+                'btn-volver': 'Volver',
+                'descripcion-contar': 'Las funciones <strong>CONTAR</strong> y <strong>CONTARA</strong> permiten contar celdas en un rango, pero con propósitos distintos:<br>• <strong>CONTAR</strong>: solo cuenta celdas con <strong>números</strong>.<br>• <strong>CONTARA</strong>: cuenta todas las celdas <strong>no vacías</strong> (números, texto, fechas, etc.).',
+                'sintaxis-y-desarrollo': 'Sintaxis y Desarrollo',
+                'sintaxis-contar': 'Sintaxis – CONTAR',
+                'sintaxis-texto-contar': 'Cuenta celdas que contienen <strong>números</strong>:',
+                'sintaxis-li1-contar': '<strong>valor1</strong>: primer rango o celda (obligatorio).',
+                'sintaxis-li2-contar': 'Ignora texto, lógicos y celdas vacías.',
+                'sintaxis-li3-contar': 'Los ceros <strong>sí se cuentan</strong>.',
+                'sintaxis-contara': 'Sintaxis – CONTARA',
+                'sintaxis-texto-contara': 'Cuenta celdas <strong>no vacías</strong>:',
+                'sintaxis-li1-contara': '<strong>valor1</strong>: primer rango o celda (obligatorio).',
+                'sintaxis-li2-contara': 'Cuenta texto, números, errores, fechas, etc.',
+                'sintaxis-li3-contara': 'Solo ignora celdas <strong>completamente vacías</strong>.',
+                'ejercicios-practica': 'Ejercicios de Práctica',
+                'ejercicio-titulo': 'Ejercicio',
+                'datos': 'Rango de celdas (ej. A1:A5):',
+                'formula-contar': 'Fórmula CONTAR:',
+                'formula-contara': 'Fórmula CONTARA:',
+                'resultado-contar': 'Resultado CONTAR:',
+                'resultado-contara': 'Resultado CONTARA:',
+                'btn-nuevos-ejercicios': 'Generar nuevos ejercicios',
+                'btn-descargar': 'Descargar ejercicios (.txt)',
+                'copyright': '© Noviembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privacidad',
+                'terminos-uso': '⏳ Términos de Uso',
+                'contacto-footer': '🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO',
+                'telefono': '☎️ Teléfono: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'en': {
+                'titulo-pagina': 'COUNT and COUNTA Functions in Excel',
+                'btn-volver': 'Back',
+                'descripcion-contar': 'The <strong>COUNT</strong> and <strong>COUNTA</strong> functions count cells in a range, but with different purposes:<br>• <strong>COUNT</strong>: counts only cells with <strong>numbers</strong>.<br>• <strong>COUNTA</strong>: counts all <strong>non-empty</strong> cells (numbers, text, dates, etc.).',
+                'sintaxis-y-desarrollo': 'Syntax and Explanation',
+                'sintaxis-contar': 'Syntax – COUNT',
+                'sintaxis-texto-contar': 'Counts cells containing <strong>numbers</strong>:',
+                'sintaxis-li1-contar': '<strong>value1</strong>: first range or cell (required).',
+                'sintaxis-li2-contar': 'Ignores text, logicals, and empty cells.',
+                'sintaxis-li3-contar': 'Zeros <strong>are counted</strong>.',
+                'sintaxis-contara': 'Syntax – COUNTA',
+                'sintaxis-texto-contara': 'Counts <strong>non-empty</strong> cells:',
+                'sintaxis-li1-contara': '<strong>value1</strong>: first range or cell (required).',
+                'sintaxis-li2-contara': 'Counts text, numbers, errors, dates, etc.',
+                'sintaxis-li3-contara': 'Only ignores <strong>completely empty</strong> cells.',
+                'ejercicios-practica': 'Practice Exercises',
+                'ejercicio-titulo': 'Exercise',
+                'datos': 'Cell range (e.g., A1:A5):',
+                'formula-contar': 'COUNT Formula:',
+                'formula-contara': 'COUNTA Formula:',
+                'resultado-contar': 'COUNT Result:',
+                'resultado-contara': 'COUNTA Result:',
+                'btn-nuevos-ejercicios': 'Generate new exercises',
+                'btn-descargar': 'Download exercises (.txt)',
+                'copyright': '© November 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Privacy Policy',
+                'terminos-uso': '⏳ Terms of Use',
+                'contacto-footer': '🛂 Contact: Luis M. Salinas - Electronics Technologist - UDO',
+                'telefono': '☎️ Phone: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Technical Support: Web Design & Development | AI Agents & Make Workflows',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'ca': {
+                'titulo-pagina': 'Funcions COMPTAR i COMPTARA a Excel',
+                'btn-volver': 'Tornar',
+                'descripcion-contar': 'Les funcions <strong>COMPTAR</strong> i <strong>COMPTARA</strong> permeten comptar cel·les en un rang, però amb propòsits diferents:<br>• <strong>COMPTAR</strong>: només compta cel·les amb <strong>números</strong>.<br>• <strong>COMPTARA</strong>: compta totes les cel·les <strong>no buides</strong> (números, text, dates, etc.).',
+                'sintaxis-y-desarrollo': 'Sintaxi i Desenvolupament',
+                'sintaxis-contar': 'Sintaxi – COMPTAR',
+                'sintaxis-texto-contar': 'Compta cel·les que contenen <strong>números</strong>:',
+                'sintaxis-li1-contar': '<strong>valor1</strong>: primer rang o cel·la (obligatori).',
+                'sintaxis-li2-contar': 'Ignora text, valors lògics i cel·les buides.',
+                'sintaxis-li3-contar': 'Els zeros <strong>sí es compten</strong>.',
+                'sintaxis-contara': 'Sintaxi – COMPTARA',
+                'sintaxis-texto-contara': 'Compta cel·les <strong>no buides</strong>:',
+                'sintaxis-li1-contara': '<strong>valor1</strong>: primer rang o cel·la (obligatori).',
+                'sintaxis-li2-contara': 'Compta text, números, errors, dates, etc.',
+                'sintaxis-li3-contara': 'Només ignora cel·les <strong>completament buides</strong>.',
+                'ejercicios-practica': 'Exercicis pràctics',
+                'ejercicio-titulo': 'Exercici',
+                'datos': 'Rang de cel·les (p. ex. A1:A5):',
+                'formula-contar': 'Fórmula COMPTAR:',
+                'formula-contara': 'Fórmula COMPTARA:',
+                'resultado-contar': 'Resultat COMPTAR:',
+                'resultado-contara': 'Resultat COMPTARA:',
+                'btn-nuevos-ejercicios': 'Generar nous exercicis',
+                'btn-descargar': 'Descarregar exercicis (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privadesa',
+                'terminos-uso': '⏳ Termes d’Ús',
+                'contacto-footer': '🛂 Contacte: Luis M. Salinas - Tecnòleg Electrònic - UDO',
+                'telefono': '☎️ Telèfon: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Suport Tècnic: Disseny i Confecció de Pàgines Web | Desenvolupament d’Agents i Fluxos a Make',
+                'email': '📧 Correu: lsalinasuban@gmail.com'
+            },
+            'fr': {
+                'titulo-pagina': 'Fonctions NB et NBVAL dans Excel',
+                'btn-volver': 'Retour',
+                'descripcion-contar': 'Les fonctions <strong>NB</strong> et <strong>NBVAL</strong> permettent de compter des cellules dans une plage, mais avec des objectifs différents :<br>• <strong>NB</strong> : compte uniquement les cellules contenant des <strong>nombres</strong>.<br>• <strong>NBVAL</strong> : compte toutes les cellules <strong>non vides</strong> (nombres, texte, dates, etc.).',
+                'sintaxis-y-desarrollo': 'Syntaxe et Explication',
+                'sintaxis-contar': 'Syntaxe – NB',
+                'sintaxis-texto-contar': 'Compte les cellules contenant des <strong>nombres</strong> :',
+                'sintaxis-li1-contar': '<strong>valeur1</strong> : première plage ou cellule (obligatoire).',
+                'sintaxis-li2-contar': 'Ignore le texte, les valeurs logiques et les cellules vides.',
+                'sintaxis-li3-contar': 'Les zéros <strong>sont comptés</strong>.',
+                'sintaxis-contara': 'Syntaxe – NBVAL',
+                'sintaxis-texto-contara': 'Compte les cellules <strong>non vides</strong> :',
+                'sintaxis-li1-contara': '<strong>valeur1</strong> : première plage ou cellule (obligatoire).',
+                'sintaxis-li2-contara': 'Compte texte, nombres, erreurs, dates, etc.',
+                'sintaxis-li3-contara': 'N’ignore que les cellules <strong>complètement vides</strong>.',
+                'ejercicios-practica': 'Exercices pratiques',
+                'ejercicio-titulo': 'Exercice',
+                'datos': 'Plage de cellules (ex. A1:A5) :',
+                'formula-contar': 'Formule NB :',
+                'formula-contara': 'Formule NBVAL :',
+                'resultado-contar': 'Résultat NB :',
+                'resultado-contara': 'Résultat NBVAL :',
+                'btn-nuevos-ejercicios': 'Générer de nouveaux exercices',
+                'btn-descargar': 'Télécharger les exercices (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Politique de Confidentialité',
+                'terminos-uso': '⏳ Conditions d’Utilisation',
+                'contacto-footer': '🛂 Contact : Luis M. Salinas - Technologue Électronique - UDO',
+                'telefono': '☎️ Téléphone : +34 673 484 940',
+                'soporte-tecnico': '⚒️ Support Technique : Conception de Sites Web | Développement d’Agents et Workflows sur Make',
+                'email': '📧 Email : lsalinasuban@gmail.com'
+            }
+        };
+
+        // Generador de ejercicios
+        function generateRandomCountExercises(count = 10) {
+            const ejercicios = [];
+            for (let i = 0; i < count; i++) {
+                // Simulamos un rango de 5 celdas
+                const celdas = [];
+                let numNumericas = 0;
+                let numNoVacias = 0;
+                for (let j = 0; j < 5; j++) {
+                    const tipo = Math.random();
+                    if (tipo < 0.4) {
+                        // Número
+                        const num = Math.floor(Math.random() * 100);
+                        celdas.push(num.toString());
+                        numNumericas++;
+                        numNoVacias++;
+                    } else if (tipo < 0.7) {
+                        // Texto
+                        const textos = ["Nombre", "OK", "N/A", "Error", "Datos"];
+                        celdas.push(textos[Math.floor(Math.random() * textos.length)]);
+                        numNoVacias++;
+                    } else if (tipo < 0.8) {
+                        // Cero (se cuenta en ambas)
+                        celdas.push("0");
+                        numNumericas++;
+                        numNoVacias++;
+                    } else {
+                        // Vacío
+                        celdas.push("");
+                    }
+                }
+                ejercicios.push({
+                    rango: "A1:A5",
+                    celdas: celdas,
+                    contar: numNumericas,
+                    contara: numNoVacias,
+                    formulaContar: "=CONTAR(A1:A5)",
+                    formulaContara: "=CONTARA(A1:A5)"
+                });
+            }
+            return ejercicios;
+        }
+
+        let currentExercises = generateRandomCountExercises();
+
+        function renderExercises(lang) {
+            const container = document.getElementById('ejercicios-container');
+            container.innerHTML = '';
+            const t = translations[lang];
+
+            currentExercises.forEach((ej, i) => {
+                const num = i + 1;
+                const card = document.createElement('div');
+                card.className = `ejercicio-card ${num % 2 === 0 ? 'ejercicio-par' : ''}`;
+                card.innerHTML = `
+                    <h3>${t['ejercicio-titulo']} ${num}</h3>
+                    <p><strong>${t['datos']}</strong> ${ej.rango}</p>
+                    <p><em>Contenido simulado:</em> ${ej.celdas.map(c => c || "—").join(', ')}</p>
+                    <p><strong>${t['formula-contar']}</strong> <span class="formula">${ej.formulaContar}</span></p>
+                    <p><strong>${t['resultado-contar']}</strong> <span class="resultado">${ej.contar}</span></p>
+                    <p><strong>${t['formula-contara']}</strong> <span class="formula">${ej.formulaContara}</span></p>
+                    <p><strong>${t['resultado-contara']}</strong> <span class="resultado">${ej.contara}</span></p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('[data-lang-key]');
+            const t = translations[lang];
+            document.body.className = document.body.className.replace(/\btheme-\w+\b/g, '').trim();
+            document.body.classList.add(`theme-${lang}`);
+
+            elements.forEach(el => {
+                const key = el.dataset.langKey;
+                if (t[key]) {
+                    if (key.includes('descripcion') || key.includes('sintaxis-li')) {
+                        el.innerHTML = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            renderExercises(lang);
+            localStorage.setItem('userLang', lang);
+        }
+
+        function downloadExercises(lang) {
+            const t = translations[lang];
+            let content = `${t['ejercicios-practica']}\n\n`;
+            currentExercises.forEach((ej, i) => {
+                content += `${t['ejercicio-titulo']} ${i + 1}\n`;
+                content += `Rango: ${ej.rango}\n`;
+                content += `Contenido: ${ej.celdas.map(c => c || "vacío").join(', ')}\n`;
+                content += `${t['formula-contar']} ${ej.formulaContar} → ${t['resultado-contar']} ${ej.contar}\n`;
+                content += `${t['formula-contara']} ${ej.formulaContara} → ${t['resultado-contara']} ${ej.contara}\n\n`;
+            });
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ejercicios_contar_contara_${lang}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('userLang') || 'es';
+            setLanguage(savedLang);
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+            });
+
+            document.getElementById('btn-nuevos-ejercicios').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                currentExercises = generateRandomCountExercises();
+                renderExercises(currentLang);
+            });
+
+            document.getElementById('btn-descargar').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                downloadExercises(currentLang);
+            });
+        });
+    </script>
+</body>
+</html>

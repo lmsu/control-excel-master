@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Luis M. Salinas">
+    <title>Función TEXTO - Excel</title>
+    <style>
+        /* --- VARIABLES BASE --- */
+        :root {
+            --espaciado-ppal: 15px;
+            --borde-radio: 8px;
+            --sombra-nav: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --sombra-card: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* === TEMAS POR IDIOMA === */
+        .theme-es { --color-ppal: #e91e63; --color-secundario: #ad1457; --color-fondo: #fce4ec; --color-texto: #263238; }
+        .theme-en { --color-ppal: #388e3c; --color-secundario: #1b5e20; --color-fondo: #e8f5e9; --color-texto: #1b5e20; }
+        .theme-ca { --color-ppal: #0288d1; --color-secundario: #01579b; --color-fondo: #e1f5fe; --color-texto: #d32f2f; }
+        .theme-fr { --color-ppal: #d32f2f; --color-secundario: #b71c1c; --color-fondo: #ffebee; --color-texto: #1a237e; }
+
+        /* Botón Volver */
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background-color: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            align-self: center;
+            margin-right: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-back svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .action-button {
+            background-color: var(--color-ppal);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            margin: 0 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: var(--color-secundario);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back span {
+                display: none;
+            }
+            .btn-back {
+                padding: 10px;
+            }
+        }
+
+        /* --- ESTILOS BASE --- */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        header {
+            background-color: var(--color-ppal);
+            box-shadow: var(--sombra-nav);
+            padding: 0 var(--espaciado-ppal);
+            margin-bottom: 30px;
+        }
+        .header-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .img-office {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            margin-bottom: 12px;
+        }
+        .header-top h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .contenido-ppal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--espaciado-ppal) 30px;
+        }
+
+        .rect-uno {
+            width: 100%;
+            max-width: 480px; /* Aprox. 40% of 1200px, pero flexible */
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            text-align: center;
+        }
+
+        .rect-dos {
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            /* Ajuste automático al contenido */
+            width: fit-content;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .rect-dos p {
+            margin: 0;
+            text-align: center; 
+        }
+        
+        .sect-ppal1, .sect-ppal2 {
+            max-width: 1200px;
+            margin: 10px auto 40px;
+            padding: 0 var(--espaciado-ppal);
+        }
+        .sect-ppal1 > h1, .sect-ppal2 > h1 {
+            text-align: center;
+            color: var(--color-ppal);
+            margin: 30px 0 20px;
+        }
+        .doble-columna {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .section1, .section1a {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+        }
+        .section1 {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+        .section1a {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicios-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .ejercicio-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            position: relative;
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicio-par { border-left: 2px solid var(--color-ppal); }
+        .ejercicio-par::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -15px;
+            width: 2px;
+            background-color: var(--color-ppal);
+        }
+        .ejercicio-card h3 {
+            color: var(--color-ppal);
+            margin-top: 0;
+        }
+        .formula {
+            background-color: #f0f4ff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        .resultado {
+            font-weight: bold;
+            color: var(--color-secundario);
+        }
+
+        .app-footer {
+            background-color: #37474f;
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .contenido-pie { max-width: 1200px; margin: 0 auto; padding: 0 var(--espaciado-ppal); }
+        .footer-links a {
+            color: #b0bec5;
+            margin: 0 8px;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+        .footer-links a:hover { color: white; }
+
+        .language-selector {
+            display: flex;
+            gap: 6px;
+            margin-top: 15px;
+        }
+        .language-selector button {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .language-selector button.active {
+            background: white;
+            color: var(--color-ppal);
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .contenido-ppal, .doble-columna, .ejercicios-grid {
+                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+            .ejercicio-par::before { display: none; }
+            .rect-uno, .rect-dos { flex: 1; }
+        }
+    </style>
+</head>
+<body class="theme-es">
+    <header>
+        <div class="header-top">
+            <a href="index.html" class="btn-back" aria-label="Volver a la página principal">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                <span data-lang-key="btn-volver">Volver</span>
+            </a>
+            <img src="./Aula virtual de clase.png" alt="Luis Salinas" class="img-office">
+            <h1 data-lang-key="titulo-pagina">Función TEXTO en Excel</h1>
+            <div class="language-selector">
+                <button data-lang="es">ES</button>
+                <button data-lang="en">EN</button>
+                <button data-lang="ca">CA</button>
+                <button data-lang="fr">FR</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+         <!--🔧 Código actualizado (solo la sección modificada):
+         1. Modificación en el bloque <main> centrado del párrafo -->
+            <div class="contenido-ppal">
+                <div class="rect-uno">
+                    <img src="Profe Salinas2.png" alt="Función SI" style="width:100%; border-radius:8px;">
+                    <div style="text-align:center; color:#666;">Profesor Luis M.Salinas</div>
+                </div>
+            <div class="rect-dos">
+                <p data-lang-key="descripcion-texto">La función <strong>TEXTO</strong> convierte un valor (número, fecha, etc.) en <strong>texto con un formato específico</strong>. Es ideal para combinar datos con mensajes, crear códigos o mostrar fechas en formatos personalizados sin cambiar el valor original.</p>
+            </div>
+        </div>
+
+        <section class="sect-ppal1">
+            <h1 data-lang-key="sintaxis-y-desarrollo">Sintaxis y Desarrollo</h1>
+            <div class="doble-columna">
+                <section class="section1">
+                    <h2 data-lang-key="sintaxis">Sintaxis</h2>
+                    <p data-lang-key="sintaxis-texto">La sintaxis de la función TEXTO es:</p>
+                    <div class="formula">=TEXTO(valor; formato)</div>
+                    <ul>
+                        <li data-lang-key="sintaxis-li1"><strong>valor</strong>: número, fecha o referencia a celda (obligatorio).</li>
+                        <li data-lang-key="sintaxis-li2"><strong>formato</strong>: cadena de texto con códigos de formato entre comillas (ej. "dd/mm/aaaa").</li>
+                        <li data-lang-key="sintaxis-li3">❗ El resultado es <strong>texto</strong>, no se puede usar en cálculos.</li>
+                    </ul>
+                </section>
+                <section class="section1a">
+                    <h2 data-lang-key="desarrollo">Desarrollo</h2>
+                    <p data-lang-key="desarrollo-texto">Ejemplos comunes:<br>
+                    • <span class="formula">=TEXTO(1234.5; "#,##0.00 €")</span> → <strong>1.234,50 €</strong><br>
+                    • <span class="formula">=TEXTO(HOY(); "dd/mm/aaaa")</span> → <strong>28/11/2025</strong><br>
+                    • <span class="formula">=TEXTO(0.85; "0.00%")</span> → <strong>85.00%</strong><br>
+                    Útil con <strong>CONCATENAR</strong> o el operador <strong>&</strong>.</p>
+                </section>
+            </div>
+        </section>
+
+        <div class="action-buttons">
+            <button class="action-button" id="btn-nuevos-ejercicios" data-lang-key="btn-nuevos-ejercicios">Generar nuevos ejercicios</button>
+            <button class="action-button" id="btn-descargar" data-lang-key="btn-descargar">Descargar ejercicios (.txt)</button>
+        </div>
+
+        <section class="sect-ppal2">
+            <h1 data-lang-key="ejercicios-practica">Ejercicios de Práctica</h1>
+            <div class="ejercicios-grid" id="ejercicios-container">
+                <!-- Generados con JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="contenido-pie">
+            <p data-lang-key="copyright">&copy; Noviembre 2025 - Luis M. Salinas</p>
+            <div class="footer-links">
+                <a href="#" data-lang-key="politica-privacidad">🔋 Política de Privacidad</a>
+                <a href="#" data-lang-key="terminos-uso">⏳ Términos de Uso</a>
+                <a href="#" data-lang-key="contacto-footer">🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO</a>
+                <a href="#" data-lang-key="telefono">☎️ Teléfono: +34 673 484 940</a>
+                <a href="#" data-lang-key="soporte-tecnico">⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make</a>
+                <a href="#" data-lang-key="email">📧 Email: lsalinasuban@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            'es': {
+                'titulo-pagina': 'Función TEXTO en Excel',
+                'btn-volver': 'Volver',
+                'descripcion-texto': 'La función <strong>TEXTO</strong> convierte un valor (número, fecha, etc.) en <strong>texto con un formato específico</strong>. Es ideal para combinar datos con mensajes, crear códigos o mostrar fechas en formatos personalizados sin cambiar el valor original.',
+                'sintaxis-y-desarrollo': 'Sintaxis y Desarrollo',
+                'sintaxis': 'Sintaxis',
+                'sintaxis-texto': 'La sintaxis de la función TEXTO es:',
+                'sintaxis-li1': '<strong>valor</strong>: número, fecha o referencia a celda (obligatorio).',
+                'sintaxis-li2': '<strong>formato</strong>: cadena de texto con códigos de formato entre comillas (ej. "dd/mm/aaaa").',
+                'sintaxis-li3': '❗ El resultado es <strong>texto</strong>, no se puede usar en cálculos.',
+                'desarrollo': 'Desarrollo',
+                'desarrollo-texto': 'Ejemplos comunes:<br>• <span class="formula">=TEXTO(1234.5; "#,##0.00 €")</span> → <strong>1.234,50 €</strong><br>• <span class="formula">=TEXTO(HOY(); "dd/mm/aaaa")</span> → <strong>28/11/2025</strong><br>• <span class="formula">=TEXTO(0.85; "0.00%")</span> → <strong>85.00%</strong><br>Útil con <strong>CONCATENAR</strong> o el operador <strong>&</strong>.',
+                'ejercicios-practica': 'Ejercicios de Práctica',
+                'ejercicio-titulo': 'Ejercicio',
+                'datos': 'Valor de entrada:',
+                'formula': 'Fórmula:',
+                'resultado': 'Resultado:',
+                'btn-nuevos-ejercicios': 'Generar nuevos ejercicios',
+                'btn-descargar': 'Descargar ejercicios (.txt)',
+                'copyright': '© Noviembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privacidad',
+                'terminos-uso': '⏳ Términos de Uso',
+                'contacto-footer': '🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO',
+                'telefono': '☎️ Teléfono: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'en': {
+                'titulo-pagina': 'TEXT Function in Excel',
+                'btn-volver': 'Back',
+                'descripcion-texto': 'The <strong>TEXT</strong> function converts a value (number, date, etc.) into <strong>text with a specific format</strong>. Ideal for combining data with messages, creating codes, or displaying dates in custom formats without changing the original value.',
+                'sintaxis-y-desarrollo': 'Syntax and Explanation',
+                'sintaxis': 'Syntax',
+                'sintaxis-texto': 'The TEXT function syntax is:',
+                'sintaxis-li1': '<strong>value</strong>: number, date, or cell reference (required).',
+                'sintaxis-li2': '<strong>format_text</strong>: format code in quotes (e.g., "dd/mm/yyyy").',
+                'sintaxis-li3': '❗ The result is <strong>text</strong> and cannot be used in calculations.',
+                'desarrollo': 'Explanation',
+                'desarrollo-texto': 'Common examples:<br>• <span class="formula">=TEXT(1234.5, "#,##0.00 €")</span> → <strong>1,234.50 €</strong><br>• <span class="formula">=TEXT(TODAY(), "dd/mm/yyyy")</span> → <strong>28/11/2025</strong><br>• <span class="formula">=TEXT(0.85, "0.00%")</span> → <strong>85.00%</strong><br>Useful with <strong>CONCATENATE</strong> or the <strong>&</strong> operator.',
+                'ejercicios-practica': 'Practice Exercises',
+                'ejercicio-titulo': 'Exercise',
+                'datos': 'Input value:',
+                'formula': 'Formula:',
+                'resultado': 'Result:',
+                'btn-nuevos-ejercicios': 'Generate new exercises',
+                'btn-descargar': 'Download exercises (.txt)',
+                'copyright': '© November 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Privacy Policy',
+                'terminos-uso': '⏳ Terms of Use',
+                'contacto-footer': '🛂 Contact: Luis M. Salinas - Electronics Technologist - UDO',
+                'telefono': '☎️ Phone: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Technical Support: Web Design & Development | AI Agents & Make Workflows',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'ca': {
+                'titulo-pagina': 'Funció TEXT a Excel',
+                'btn-volver': 'Tornar',
+                'descripcion-texto': 'La funció <strong>TEXT</strong> converteix un valor (número, data, etc.) en <strong>text amb un format específic</strong>. És ideal per combinar dades amb missatges, crear codis o mostrar dates en formats personalitzats sense canviar el valor original.',
+                'sintaxis-y-desarrollo': 'Sintaxi i Desenvolupament',
+                'sintaxis': 'Sintaxi',
+                'sintaxis-texto': 'La sintaxi de la funció TEXT és:',
+                'sintaxis-li1': '<strong>valor</strong>: número, data o referència a cel·la (obligatori).',
+                'sintaxis-li2': '<strong>format</strong>: codi de format entre cometes (p. ex. "dd/mm/aaaa").',
+                'sintaxis-li3': '❗ El resultat és <strong>text</strong>, no es pot usar en càlculs.',
+                'desarrollo': 'Desenvolupament',
+                'desarrollo-texto': 'Exemples comuns:<br>• <span class="formula">=TEXT(1234.5; "#,##0.00 €")</span> → <strong>1.234,50 €</strong><br>• <span class="formula">=TEXT(AVUI(); "dd/mm/aaaa")</span> → <strong>28/11/2025</strong><br>• <span class="formula">=TEXT(0.85; "0.00%")</span> → <strong>85.00%</strong><br>Útil amb <strong>CONCATENAR</strong> o l’operador <strong>&</strong>.',
+                'ejercicios-practica': 'Exercicis pràctics',
+                'ejercicio-titulo': 'Exercici',
+                'datos': 'Valor d’entrada:',
+                'formula': 'Fórmula:',
+                'resultado': 'Resultat:',
+                'btn-nuevos-ejercicios': 'Generar nous exercicis',
+                'btn-descargar': 'Descarregar exercicis (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privadesa',
+                'terminos-uso': '⏳ Termes d’Ús',
+                'contacto-footer': '🛂 Contacte: Luis M. Salinas - Tecnòleg Electrònic - UDO',
+                'telefono': '☎️ Telèfon: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Suport Tècnic: Disseny i Confecció de Pàgines Web | Desenvolupament d’Agents i Fluxos a Make',
+                'email': '📧 Correu: lsalinasuban@gmail.com'
+            },
+            'fr': {
+                'titulo-pagina': 'Fonction TEXTE dans Excel',
+                'btn-volver': 'Retour',
+                'descripcion-texto': 'La fonction <strong>TEXTE</strong> convertit une valeur (nombre, date, etc.) en <strong>texte avec un format spécifique</strong>. Idéale pour combiner des données avec des messages, créer des codes ou afficher des dates dans des formats personnalisés sans modifier la valeur d’origine.',
+                'sintaxis-y-desarrollo': 'Syntaxe et Explication',
+                'sintaxis': 'Syntaxe',
+                'sintaxis-texto': 'La syntaxe de la fonction TEXTE est :',
+                'sintaxis-li1': '<strong>valeur</strong> : nombre, date ou référence de cellule (obligatoire).',
+                'sintaxis-li2': '<strong>format</strong> : code de format entre guillemets (ex. "jj/mm/aaaa").',
+                'sintaxis-li3': '❗ Le résultat est du <strong>texte</strong> et ne peut pas être utilisé dans des calculs.',
+                'desarrollo': 'Explication',
+                'desarrollo-texto': 'Exemples courants :<br>• <span class="formula">=TEXTE(1234.5; "#,##0.00 €")</span> → <strong>1 234,50 €</strong><br>• <span class="formula">=TEXTE(AUJOURDHUI(); "jj/mm/aaaa")</span> → <strong>28/11/2025</strong><br>• <span class="formula">=TEXTE(0.85; "0.00%")</span> → <strong>85.00%</strong><br>Utile avec <strong>CONCATENER</strong> ou l’opérateur <strong>&</strong>.',
+                'ejercicios-practica': 'Exercices pratiques',
+                'ejercicio-titulo': 'Exercice',
+                'datos': 'Valeur d’entrée :',
+                'formula': 'Formule :',
+                'resultado': 'Résultat :',
+                'btn-nuevos-ejercicios': 'Générer de nouveaux exercices',
+                'btn-descargar': 'Télécharger les exercices (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Politique de Confidentialité',
+                'terminos-uso': '⏳ Conditions d’Utilisation',
+                'contacto-footer': '🛂 Contact : Luis M. Salinas - Technologue Électronique - UDO',
+                'telefono': '☎️ Téléphone : +34 673 484 940',
+                'soporte-tecnico': '⚒️ Support Technique : Conception de Sites Web | Développement d’Agents et Workflows sur Make',
+                'email': '📧 Email : lsalinasuban@gmail.com'
+            }
+        };
+
+        // Generador de ejercicios
+        function generateRandomTextExercises(count = 10) {
+            const ejercicios = [];
+            const ejemplos = [
+                { valor: 1234.56, formato: '"#,##0.00 €"', resultado: "1.234,56 €" },
+                { valor: new Date(2025, 10, 28), formato: '"dd/mm/aaaa"', resultado: "28/11/2025" },
+                { valor: 0.75, formato: '"0.00%"', resultado: "75.00%" },
+                { valor: 9999, formato: '"00000"', resultado: "09999" },
+                { valor: 42, formato: '"Día #"', resultado: "Día 42" },
+                { valor: 1000000, formato: '"#,##0"', resultado: "1.000.000" },
+                { valor: new Date(2024, 5, 15), formato: '"dddd, dd \\de mmmm"', resultado: "sábado, 15 de junio" },
+                { valor: 0.123, formato: '"0.0%"', resultado: "12.3%" },
+                { valor: 500, formato: '"Total: # €"', resultado: "Total: 500 €" },
+                { valor: 2025, formato: '"Año ####"', resultado: "Año 2025" }
+            ];
+            const seleccionados = [...ejemplos].sort(() => 0.5 - Math.random()).slice(0, count);
+            return seleccionados.map(ej => ({
+                valor: typeof ej.valor === 'object' ? 'HOY()' : ej.valor,
+                formula: `=TEXTO(${typeof ej.valor === 'object' ? 'HOY()' : ej.valor}; ${ej.formato})`,
+                resultado: ej.resultado
+            }));
+        }
+
+        let currentExercises = generateRandomTextExercises();
+
+        function renderExercises(lang) {
+            const container = document.getElementById('ejercicios-container');
+            container.innerHTML = '';
+            const t = translations[lang];
+
+            currentExercises.forEach((ej, i) => {
+                const num = i + 1;
+                const card = document.createElement('div');
+                card.className = `ejercicio-card ${num % 2 === 0 ? 'ejercicio-par' : ''}`;
+                card.innerHTML = `
+                    <h3>${t['ejercicio-titulo']} ${num}</h3>
+                    <p><strong>${t['datos']}</strong> ${ej.valor}</p>
+                    <p><strong>${t['formula']}</strong> <span class="formula">${ej.formula}</span></p>
+                    <p><strong>${t['resultado']}</strong> <span class="resultado">${ej.resultado}</span></p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('[data-lang-key]');
+            const t = translations[lang];
+            document.body.className = document.body.className.replace(/\btheme-\w+\b/g, '').trim();
+            document.body.classList.add(`theme-${lang}`);
+
+            elements.forEach(el => {
+                const key = el.dataset.langKey;
+                if (t[key]) {
+                    if (key.includes('descripcion') || key.includes('desarrollo-texto') || key.includes('sintaxis-li')) {
+                        el.innerHTML = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            renderExercises(lang);
+            localStorage.setItem('userLang', lang);
+        }
+
+        function downloadExercises(lang) {
+            const t = translations[lang];
+            let content = `${t['ejercicios-practica']}\n\n`;
+            currentExercises.forEach((ej, i) => {
+                content += `${t['ejercicio-titulo']} ${i + 1}\n`;
+                content += `${t['datos']} ${ej.valor}\n`;
+                content += `${t['formula']} ${ej.formula}\n`;
+                content += `${t['resultado']} ${ej.resultado}\n\n`;
+            });
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ejercicios_texto_${lang}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('userLang') || 'es';
+            setLanguage(savedLang);
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+            });
+
+            document.getElementById('btn-nuevos-ejercicios').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                currentExercises = generateRandomTextExercises();
+                renderExercises(currentLang);
+            });
+
+            document.getElementById('btn-descargar').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                downloadExercises(currentLang);
+            });
+        });
+    </script>
+</body>
+</html>

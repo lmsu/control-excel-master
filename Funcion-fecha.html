@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Luis M. Salinas">
+    <title>Función FECHA - Excel</title>
+    <style>
+        /* --- VARIABLES BASE --- */
+        :root {
+            --espaciado-ppal: 15px;
+            --borde-radio: 8px;
+            --sombra-nav: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --sombra-card: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* === TEMAS POR IDIOMA === */
+        .theme-es { --color-ppal: #388e3c; --color-secundario: #1b5e20; --color-fondo: #e8f5e9; --color-texto: #263238; }
+        .theme-en { --color-ppal: #0288d1; --color-secundario: #01579b; --color-fondo: #e1f5fe; --color-texto: #1b5e20; }
+        .theme-ca { --color-ppal: #f57c00; --color-secundario: #e65100; --color-fondo: #fff3e0; --color-texto: #d32f2f; }
+        .theme-fr { --color-ppal: #6a1b9a; --color-secundario: #4a148c; --color-fondo: #f3e5f5; --color-texto: #1a237e; }
+
+        /* Botón Volver */
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background-color: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            align-self: center;
+            margin-right: 20px;
+        }
+
+        .btn-back:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-back svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .action-button {
+            background-color: var(--color-ppal);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            margin: 0 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover {
+            background-color: var(--color-secundario);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back span {
+                display: none;
+            }
+            .btn-back {
+                padding: 10px;
+            }
+        }
+
+        /* --- ESTILOS BASE --- */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.6;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        header {
+            background-color: var(--color-ppal);
+            box-shadow: var(--sombra-nav);
+            padding: 0 var(--espaciado-ppal);
+            margin-bottom: 30px;
+        }
+        .header-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .img-office {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            margin-bottom: 12px;
+        }
+        .header-top h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.6rem;
+        }
+
+        .contenido-ppal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--espaciado-ppal) 30px;
+        }
+
+        .rect-uno {
+            width: 100%;
+            max-width: 480px; /* Aprox. 40% of 1200px, pero flexible */
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            text-align: center;
+        }
+
+        .rect-dos {
+            background: white;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            padding: 20px;
+            border: 3px solid blue;
+            /* Ajuste automático al contenido */
+            width: fit-content;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .rect-dos p {
+            margin: 0;
+            text-align: center; 
+        }
+        .sect-ppal1, .sect-ppal2 {
+            max-width: 1200px;
+            margin: 10px auto 40px;
+            padding: 0 var(--espaciado-ppal);
+        }
+        .sect-ppal1 > h1, .sect-ppal2 > h1 {
+            text-align: center;
+            color: var(--color-ppal);
+            margin: 30px 0 20px;
+        }
+        .doble-columna {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .section1, .section1a {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+        }
+        .section1 {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+        .section1a {
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicios-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .ejercicio-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--borde-radio);
+            box-shadow: var(--sombra-card);
+            position: relative;
+            border-left: 7px solid var(--color-ppal);
+            border-bottom: 7px solid var(--color-secundario);
+            border-top: 2px solid var(--color-ppal);
+            border-right: 2px solid var(--color-secundario);
+        }
+
+        .ejercicio-par { border-left: 2px solid var(--color-ppal); }
+        .ejercicio-par::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -15px;
+            width: 2px;
+            background-color: var(--color-ppal);
+        }
+        .ejercicio-card h3 {
+            color: var(--color-ppal);
+            margin-top: 0;
+        }
+        .formula {
+            background-color: #f0f4ff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        .resultado {
+            font-weight: bold;
+            color: var(--color-secundario);
+        }
+
+        .app-footer {
+            background-color: #37474f;
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .contenido-pie { max-width: 1200px; margin: 0 auto; padding: 0 var(--espaciado-ppal); }
+        .footer-links a {
+            color: #b0bec5;
+            margin: 0 8px;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+        .footer-links a:hover { color: white; }
+
+        .language-selector {
+            display: flex;
+            gap: 6px;
+            margin-top: 15px;
+        }
+        .language-selector button {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .language-selector button.active {
+            background: white;
+            color: var(--color-ppal);
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .contenido-ppal, .doble-columna, .ejercicios-grid {
+                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+            .ejercicio-par::before { display: none; }
+            .rect-uno, .rect-dos { flex: 1; }
+        }
+    </style>
+</head>
+<body class="theme-es">
+    <header>
+        <div class="header-top">
+            <a href="index.html" class="btn-back" aria-label="Volver a la página principal">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                <span data-lang-key="btn-volver">Volver</span>
+            </a>
+            <img src="./Aula virtual de clase.png" alt="Luis Salinas" class="img-office">
+            <h1 data-lang-key="titulo-pagina">Función FECHA en Excel</h1>
+            <div class="language-selector">
+                <button data-lang="es">ES</button>
+                <button data-lang="en">EN</button>
+                <button data-lang="ca">CA</button>
+                <button data-lang="fr">FR</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!--🔧 Código actualizado (solo la sección modificada):
+         1. Modificación en el bloque <main> centrado del párrafo -->
+        <div class="contenido-ppal">
+            <div class="rect-uno">
+                <img src="Profe Salinas7.png" alt="Función SI" style="width:100%; border-radius:8px;">
+                <div style="text-align:center; color:#666;">Profesor Luis M.Salinas</div>
+            </div>
+            <div class="rect-dos">
+                <p data-lang-key="descripcion-fecha">La función <strong>FECHA</strong> en Excel crea una fecha válida a partir de valores de año, mes y día. Es esencial para construir fechas dinámicas, validar entradas o realizar cálculos temporales.</p>
+            </div>
+        </div>
+
+        <section class="sect-ppal1">
+            <h1 data-lang-key="sintaxis-y-desarrollo">Sintaxis y Desarrollo</h1>
+            <div class="doble-columna">
+                <section class="section1">
+                    <h2 data-lang-key="sintaxis">Sintaxis</h2>
+                    <p data-lang-key="sintaxis-texto">La sintaxis de la función FECHA es:</p>
+                    <div class="formula">=FECHA(año; mes; día)</div>
+                    <ul>
+                        <li data-lang-key="sintaxis-li1"><strong>año</strong>: número de 1900 a 9999 (puede ser referencia o valor).</li>
+                        <li data-lang-key="sintaxis-li2"><strong>mes</strong>: número entero (1–12). Valores fuera de rango ajustan la fecha (ej. mes=13 → +1 año).</li>
+                        <li data-lang-key="sintaxis-li3"><strong>día</strong>: número entero. Valores fuera de rango también ajustan (ej. día=32 → +1 mes).</li>
+                    </ul>
+                </section>
+                <section class="section1a">
+                    <h2 data-lang-key="desarrollo">Desarrollo</h2>
+                    <p data-lang-key="desarrollo-texto">Ejemplo: <span class="formula">=FECHA(2025; 11; 28)</span> devuelve <strong>28/11/2025</strong>. Si escribes <span class="formula">=FECHA(2025; 13; 1)</span>, Excel ajusta a <strong>01/01/2026</strong>. Útil con funciones como <span class="formula">HOY()</span> o en cálculos de vencimientos.</p>
+                </section>
+            </div>
+        </section>
+
+        <div class="action-buttons">
+            <button class="action-button" id="btn-nuevos-ejercicios" data-lang-key="btn-nuevos-ejercicios">Generar nuevos ejercicios</button>
+            <button class="action-button" id="btn-descargar" data-lang-key="btn-descargar">Descargar ejercicios (.txt)</button>
+        </div>
+
+        <section class="sect-ppal2">
+            <h1 data-lang-key="ejercicios-practica">Ejercicios de Práctica</h1>
+            <div class="ejercicios-grid" id="ejercicios-container">
+                <!-- Generados con JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <div class="contenido-pie">
+            <p data-lang-key="copyright">&copy; Noviembre 2025 - Luis M. Salinas</p>
+            <div class="footer-links">
+                <a href="#" data-lang-key="politica-privacidad">🔋 Política de Privacidad</a>
+                <a href="#" data-lang-key="terminos-uso">⏳ Términos de Uso</a>
+                <a href="#" data-lang-key="contacto-footer">🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO</a>
+                <a href="#" data-lang-key="telefono">☎️ Teléfono: +34 673 484 940</a>
+                <a href="#" data-lang-key="soporte-tecnico">⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make</a>
+                <a href="#" data-lang-key="email">📧 Email: lsalinasuban@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            'es': {
+                'titulo-pagina': 'Función FECHA en Excel',
+                'btn-volver': 'Volver',
+                'descripcion-fecha': 'La función <strong>FECHA</strong> en Excel crea una fecha válida a partir de valores de año, mes y día. Es esencial para construir fechas dinámicas, validar entradas o realizar cálculos temporales.',
+                'sintaxis-y-desarrollo': 'Sintaxis y Desarrollo',
+                'sintaxis': 'Sintaxis',
+                'sintaxis-texto': 'La sintaxis de la función FECHA es:',
+                'sintaxis-li1': '<strong>año</strong>: número de 1900 a 9999 (puede ser referencia o valor).',
+                'sintaxis-li2': '<strong>mes</strong>: número entero (1–12). Valores fuera de rango ajustan la fecha (ej. mes=13 → +1 año).',
+                'sintaxis-li3': '<strong>día</strong>: número entero. Valores fuera de rango también ajustan (ej. día=32 → +1 mes).',
+                'desarrollo': 'Desarrollo',
+                'desarrollo-texto': 'Ejemplo: <span class="formula">=FECHA(2025; 11; 28)</span> devuelve <strong>28/11/2025</strong>. Si escribes <span class="formula">=FECHA(2025; 13; 1)</span>, Excel ajusta a <strong>01/01/2026</strong>. Útil con funciones como <span class="formula">HOY()</span> o en cálculos de vencimientos.',
+                'ejercicios-practica': 'Ejercicios de Práctica',
+                'ejercicio-titulo': 'Ejercicio',
+                'datos': 'Entrada (año; mes; día):',
+                'formula': 'Fórmula:',
+                'resultado': 'Resultado (fecha):',
+                'btn-nuevos-ejercicios': 'Generar nuevos ejercicios',
+                'btn-descargar': 'Descargar ejercicios (.txt)',
+                'copyright': '© Noviembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privacidad',
+                'terminos-uso': '⏳ Términos de Uso',
+                'contacto-footer': '🛂 Contacto: Luis M. Salinas - Tecnólogo Electrónico - UDO',
+                'telefono': '☎️ Teléfono: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Soporte Técnico: Diseño y Confección de Páginas Web | Desarrollo de Agentes y Workflows en Make',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'en': {
+                'titulo-pagina': 'DATE Function in Excel',
+                'btn-volver': 'Back',
+                'descripcion-fecha': 'The <strong>DATE</strong> function in Excel creates a valid date from year, month, and day values. Essential for building dynamic dates, validating inputs, or performing time-based calculations.',
+                'sintaxis-y-desarrollo': 'Syntax and Explanation',
+                'sintaxis': 'Syntax',
+                'sintaxis-texto': 'The DATE function syntax is:',
+                'sintaxis-li1': '<strong>year</strong>: number from 1900 to 9999 (can be a cell reference or value).',
+                'sintaxis-li2': '<strong>month</strong>: integer (1–12). Out-of-range values roll over (e.g., month=13 → +1 year).',
+                'sintaxis-li3': '<strong>day</strong>: integer. Out-of-range values also roll over (e.g., day=32 → +1 month).',
+                'desarrollo': 'Explanation',
+                'desarrollo-texto': 'Example: <span class="formula">=DATE(2025, 11, 28)</span> returns <strong>11/28/2025</strong>. If you enter <span class="formula">=DATE(2025, 13, 1)</span>, Excel adjusts to <strong>01/01/2026</strong>. Useful with <span class="formula">TODAY()</span> or for calculating due dates.',
+                'ejercicios-practica': 'Practice Exercises',
+                'ejercicio-titulo': 'Exercise',
+                'datos': 'Input (year; month; day):',
+                'formula': 'Formula:',
+                'resultado': 'Result (date):',
+                'btn-nuevos-ejercicios': 'Generate new exercises',
+                'btn-descargar': 'Download exercises (.txt)',
+                'copyright': '© November 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Privacy Policy',
+                'terminos-uso': '⏳ Terms of Use',
+                'contacto-footer': '🛂 Contact: Luis M. Salinas - Electronics Technologist - UDO',
+                'telefono': '☎️ Phone: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Technical Support: Web Design & Development | AI Agents & Make Workflows',
+                'email': '📧 Email: lsalinasuban@gmail.com'
+            },
+            'ca': {
+                'titulo-pagina': 'Funció DATA a Excel',
+                'btn-volver': 'Tornar',
+                'descripcion-fecha': 'La funció <strong>DATA</strong> a Excel crea una data vàlida a partir de valors d’any, mes i dia. És essencial per construir dates dinàmiques, validar entrades o fer càlculs temporals.',
+                'sintaxis-y-desarrollo': 'Sintaxi i Desenvolupament',
+                'sintaxis': 'Sintaxi',
+                'sintaxis-texto': 'La sintaxi de la funció DATA és:',
+                'sintaxis-li1': '<strong>any</strong>: número de 1900 a 9999 (pot ser referència o valor).',
+                'sintaxis-li2': '<strong>mes</strong>: número enter (1–12). Els valors fora de rang ajusten la data (p. ex. mes=13 → +1 any).',
+                'sintaxis-li3': '<strong>dia</strong>: número enter. Els valors fora de rang també ajusten (p. ex. dia=32 → +1 mes).',
+                'desarrollo': 'Desenvolupament',
+                'desarrollo-texto': 'Exemple: <span class="formula">=DATA(2025; 11; 28)</span> retorna <strong>28/11/2025</strong>. Si escrius <span class="formula">=DATA(2025; 13; 1)</span>, Excel ajusta a <strong>01/01/2026</strong>. Útil amb funcions com <span class="formula">AVUI()</span> o en càlculs de venciments.',
+                'ejercicios-practica': 'Exercicis pràctics',
+                'ejercicio-titulo': 'Exercici',
+                'datos': 'Entrada (any; mes; dia):',
+                'formula': 'Fórmula:',
+                'resultado': 'Resultat (data):',
+                'btn-nuevos-ejercicios': 'Generar nous exercicis',
+                'btn-descargar': 'Descarregar exercicis (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Política de Privadesa',
+                'terminos-uso': '⏳ Termes d’Ús',
+                'contacto-footer': '🛂 Contacte: Luis M. Salinas - Tecnòleg Electrònic - UDO',
+                'telefono': '☎️ Telèfon: +34 673 484 940',
+                'soporte-tecnico': '⚒️ Suport Tècnic: Disseny i Confecció de Pàgines Web | Desenvolupament d’Agents i Fluxos a Make',
+                'email': '📧 Correu: lsalinasuban@gmail.com'
+            },
+            'fr': {
+                'titulo-pagina': 'Fonction DATE dans Excel',
+                'btn-volver': 'Retour',
+                'descripcion-fecha': 'La fonction <strong>DATE</strong> dans Excel crée une date valide à partir des valeurs d’année, mois et jour. Essentielle pour construire des dates dynamiques, valider des entrées ou effectuer des calculs temporels.',
+                'sintaxis-y-desarrollo': 'Syntaxe et Explication',
+                'sintaxis': 'Syntaxe',
+                'sintaxis-texto': 'La syntaxe de la fonction DATE est :',
+                'sintaxis-li1': '<strong>année</strong> : nombre de 1900 à 9999 (peut être une référence ou une valeur).',
+                'sintaxis-li2': '<strong>mois</strong> : entier (1–12). Les valeurs hors plage s’ajustent (ex. mois=13 → +1 an).',
+                'sintaxis-li3': '<strong>jour</strong> : entier. Les valeurs hors plage s’ajustent aussi (ex. jour=32 → +1 mois).',
+                'desarrollo': 'Explication',
+                'desarrollo-texto': 'Exemple : <span class="formula">=DATE(2025; 11; 28)</span> renvoie <strong>28/11/2025</strong>. Si vous saisissez <span class="formula">=DATE(2025; 13; 1)</span>, Excel ajuste à <strong>01/01/2026</strong>. Utile avec <span class="formula">AUJOURDHUI()</span> ou pour calculer des échéances.',
+                'ejercicios-practica': 'Exercices pratiques',
+                'ejercicio-titulo': 'Exercice',
+                'datos': 'Entrée (année; mois; jour) :',
+                'formula': 'Formule :',
+                'resultado': 'Résultat (date) :',
+                'btn-nuevos-ejercicios': 'Générer de nouveaux exercices',
+                'btn-descargar': 'Télécharger les exercices (.txt)',
+                'copyright': '© Novembre 2025 - Luis M. Salinas',
+                'politica-privacidad': '🔋 Politique de Confidentialité',
+                'terminos-uso': '⏳ Conditions d’Utilisation',
+                'contacto-footer': '🛂 Contact : Luis M. Salinas - Technologue Électronique - UDO',
+                'telefono': '☎️ Téléphone : +34 673 484 940',
+                'soporte-tecnico': '⚒️ Support Technique : Conception de Sites Web | Développement d’Agents et Workflows sur Make',
+                'email': '📧 Email : lsalinasuban@gmail.com'
+            }
+        };
+
+        // Generador de ejercicios de FECHA
+        function generateRandomDateExercises(count = 10) {
+            const years = [2023, 2024, 2025, 2026, 2030];
+            const months = [-2, 0, 1, 5, 12, 13, 15, 24];
+            const days = [-5, 0, 1, 15, 28, 30, 31, 32, 45];
+
+            const ejercicios = [];
+            for (let i = 0; i < count; i++) {
+                const y = years[Math.floor(Math.random() * years.length)];
+                const m = months[Math.floor(Math.random() * months.length)];
+                const d = days[Math.floor(Math.random() * days.length)];
+
+                const formula = `=FECHA(${y}; ${m}; ${d})`;
+
+                // Simulamos el resultado ajustado (solo con fines ilustrativos)
+                // En la práctica, Excel lo calcula internamente
+                let resultado;
+                if (y >= 1900 && y <= 9999) {
+                    if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+                        resultado = `${d.toString().padStart(2, '0')}/${m.toString().padStart(2, '0')}/${y}`;
+                    } else {
+                        resultado = "Fecha ajustada (ej. 01/02/2026)";
+                    }
+                } else {
+                    resultado = "Error: año fuera de rango";
+                }
+
+                ejercicios.push({
+                    datos: [y, m, d],
+                    formula: formula,
+                    resultado: resultado
+                });
+            }
+            return ejercicios;
+        }
+
+        let currentExercises = generateRandomDateExercises();
+
+        function renderExercises(lang) {
+            const container = document.getElementById('ejercicios-container');
+            container.innerHTML = '';
+            const t = translations[lang];
+
+            currentExercises.forEach((ej, i) => {
+                const num = i + 1;
+                const card = document.createElement('div');
+                card.className = `ejercicio-card ${num % 2 === 0 ? 'ejercicio-par' : ''}`;
+                card.innerHTML = `
+                    <h3>${t['ejercicio-titulo']} ${num}</h3>
+                    <p><strong>${t['datos']}</strong> ${ej.datos.join('; ')}</p>
+                    <p><strong>${t['formula']}</strong> <span class="formula">${ej.formula}</span></p>
+                    <p><strong>${t['resultado']}</strong> <span class="resultado">${ej.resultado}</span></p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('[data-lang-key]');
+            const t = translations[lang];
+            document.body.className = document.body.className.replace(/\btheme-\w+\b/g, '').trim();
+            document.body.classList.add(`theme-${lang}`);
+
+            elements.forEach(el => {
+                const key = el.dataset.langKey;
+                if (t[key]) {
+                    if (key.includes('descripcion') || key.includes('desarrollo-texto') || key.includes('sintaxis-li')) {
+                        el.innerHTML = t[key];
+                    } else {
+                        el.textContent = t[key];
+                    }
+                }
+            });
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            renderExercises(lang);
+            localStorage.setItem('userLang', lang);
+        }
+
+        function downloadExercises(lang) {
+            const t = translations[lang];
+            let content = `${t['ejercicios-practica']}\n\n`;
+            currentExercises.forEach((ej, i) => {
+                content += `${t['ejercicio-titulo']} ${i + 1}\n`;
+                content += `${t['datos']} ${ej.datos.join('; ')}\n`;
+                content += `${t['formula']} ${ej.formula}\n`;
+                content += `${t['resultado']} ${ej.resultado}\n\n`;
+            });
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ejercicios_fecha_${lang}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('userLang') || 'es';
+            setLanguage(savedLang);
+
+            document.querySelectorAll('.language-selector button').forEach(btn => {
+                btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+            });
+
+            document.getElementById('btn-nuevos-ejercicios').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                currentExercises = generateRandomDateExercises();
+                renderExercises(currentLang);
+            });
+
+            document.getElementById('btn-descargar').addEventListener('click', () => {
+                const currentLang = document.body.className.match(/theme-(\w+)/)?.[1] || 'es';
+                downloadExercises(currentLang);
+            });
+        });
+    </script>
+</body>
+</html>
